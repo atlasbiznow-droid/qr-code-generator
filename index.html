@@ -461,31 +461,39 @@
         function downloadQR(format) {
             const canvas = document.querySelector('#qr-container canvas');
             
-            if (format === 'png' && canvas) {
+            if (!canvas) {
+                alert('Please generate a QR code first');
+                return;
+            }
+            
+            if (format === 'png') {
                 // Download as PNG
                 const link = document.createElement('a');
                 link.download = 'qrcode.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             } else if (format === 'svg') {
-                // Get SVG from QRCode object
-                if (qrObject && qrObject._qrCode) {
-                    const svgElement = qrObject._qrCode.getSvg();
-                    if (svgElement) {
-                        const svgData = new XMLSerializer().serializeToString(svgElement);
-                        const link = document.createElement('a');
-                        link.download = 'qrcode.svg';
-                        link.href = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
-                        link.click();
-                    }
-                }
-                // Fallback: download canvas as SVG if no native SVG support
-                if (!qrObject || !qrObject._qrCode) {
+                // Get SVG element directly
+                const svgEl = document.querySelector('#qr-container svg');
+                if (svgEl) {
+                    const svgData = new XMLSerializer().serializeToString(svgEl);
+                    const blob = new Blob([svgData], {type: 'image/svg+xml'});
                     const link = document.createElement('a');
                     link.download = 'qrcode.svg';
-                    // Create simple SVG from canvas
-                    link.href = canvas.toDataURL('image/svg+xml');
+                    link.href = URL.createObjectURL(blob);
                     link.click();
+                    URL.revokeObjectURL(link.href);
+                } else {
+                    // Fallback: create SVG from canvas size
+                    const w = canvas.width;
+                    const h = canvas.height;
+                    const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><image href="${canvas.toDataURL('image/png')}" width="${w}" height="${h}"/></svg>`;
+                    const blob = new Blob([svgData], {type: 'image/svg+xml'});
+                    const link = document.createElement('a');
+                    link.download = 'qrcode.svg';
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    URL.revokeObjectURL(link.href);
                 }
             }
         }
