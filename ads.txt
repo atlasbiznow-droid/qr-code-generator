@@ -1,0 +1,11 @@
+# AdSense Verification File
+# 
+# This file validates that you own this website for Google AdSense
+# 
+# Instructions:
+# 1. Sign up at https://adsense.google.com
+# 2. Get your publisher ID from your AdSense account
+# 3. Replace 'google.com, pub-0000000000000000' with your actual publisher ID
+# 4. Keep this file in the root directory of your website
+
+google.com, pub-0000000000000000000, DIRECT, f08c47f8b094099f6
