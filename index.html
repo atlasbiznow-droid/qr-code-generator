@@ -76,7 +76,19 @@
             border-radius: 0 !important;
         }
         .qr-canvas.round-style {
-            border-radius: 24px;
+            border-radius: 50%;
+        }
+        
+        /* QR Preview Section Styling */
+        .qr-preview-section {
+            border: 3px solid #f59e0b;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+        .qr-preview-section h2 {
+            color: #b45309;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
         }
         .tab-active {
             border-bottom: 3px solid var(--primary);
@@ -248,14 +260,14 @@
                 </div>
 
                 <!-- QR Preview -->
-                <div class="bg-white rounded-xl shadow-sm border p-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">Your QR Code</h2>
+                <div class="qr-preview-section bg-white rounded-xl shadow-sm border p-6">
+                    <h2 class="text-lg font-bold text-orange-800 mb-4 text-center">Your QR Code</h2>
                     <div class="qr-canvas" id="qr-container">
                         <p class="text-gray-400 text-center">Enter content above to generate QR code</p>
                     </div>
                     <div class="mt-4 flex gap-2">
-                        <button onclick="downloadQR('png')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition">Download PNG</button>
-                        <button onclick="downloadQR('svg')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition">Download SVG</button>
+                        <button onclick="downloadQR('png')" class="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Download PNG</button>
+                        <button onclick="downloadQR('svg')" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-400 hover:from-yellow-600 hover:to-orange-500 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Download SVG</button>
                     </div>
                 </div>
 
@@ -512,6 +524,10 @@
                 return;
             }
             
+            // Temporarily remove border-radius for clean download
+            const originalBorderRadius = canvas.style.borderRadius;
+            canvas.style.borderRadius = '0';
+            
             if (format === 'png') {
                 // Download as PNG
                 const link = document.createElement('a');
@@ -519,34 +535,24 @@
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             } else if (format === 'svg') {
-                // Try to get native SVG from library
-                const svgEl = document.querySelector('#qr-container svg');
-                if (svgEl) {
-                    // Native SVG - download as-is
-                    const svgData = new XMLSerializer().serializeToString(svgEl);
-                    const blob = new Blob([svgData], {type: 'image/svg+xml'});
-                    const link = document.createElement('a');
-                    link.download = 'qrcode.svg';
-                    link.href = URL.createObjectURL(blob);
-                    link.click();
-                    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-                } else {
-                    // Canvas fallback - wrap PNG in SVG container
-                    const w = canvas.width || 250;
-                    const h = canvas.height || 250;
-                    const pngData = canvas.toDataURL('image/png');
-                    const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+                // Create SVG from canvas - always square
+                const w = canvas.width || 200;
+                const h = canvas.height || 200;
+                const pngData = canvas.toDataURL('image/png');
+                const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <image width="${w}" height="${h}" xlink:href="${pngData}"/>
 </svg>`;
-                    const blob = new Blob([svgContent], {type: 'image/svg+xml'});
-                    const link = document.createElement('a');
-                    link.download = 'qrcode.svg';
-                    link.href = URL.createObjectURL(blob);
-                    link.click();
-                    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-                }
+                const blob = new Blob([svgContent], {type: 'image/svg+xml'});
+                const link = document.createElement('a');
+                link.download = 'qrcode.svg';
+                link.href = URL.createObjectURL(blob);
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(link.href), 1000);
             }
+            
+            // Restore border-radius
+            canvas.style.borderRadius = originalBorderRadius;
         }
 
         // Initialize
