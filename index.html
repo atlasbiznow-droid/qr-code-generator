@@ -69,9 +69,14 @@
             background: #f8fafc;
             border-radius: 1rem;
             padding: 1rem;
+            overflow: hidden;
         }
-        .qr-canvas.round-style canvas {
-            border-radius: 12px;
+        .qr-canvas.round-style {
+            border-radius: 20px;
+        }
+        .qr-canvas.round-style canvas,
+        .qr-canvas.round-style img {
+            border-radius: 16px !important;
         }
         .tab-active {
             border-bottom: 3px solid var(--primary);
@@ -469,10 +474,22 @@
             
             qrObject = new QRCode(container, options);
             
-            // Apply round CSS styling if selected
-            if (currentQRShape === 'round') {
-                container.className = 'qr-canvas round-style';
-            }
+            // Apply round CSS styling after QR renders (library is async)
+            setTimeout(() => {
+                if (currentQRShape === 'round') {
+                    container.className = 'qr-canvas round-style';
+                    const canvas = container.querySelector('canvas');
+                    if (canvas) {
+                        canvas.style.borderRadius = '16px';
+                    }
+                } else {
+                    container.className = 'qr-canvas';
+                    const canvas = container.querySelector('canvas');
+                    if (canvas) {
+                        canvas.style.borderRadius = '0';
+                    }
+                }
+            }, 100);
         }
 
         // Handle logo upload
