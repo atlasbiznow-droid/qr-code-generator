@@ -429,14 +429,17 @@
                 colorDark: fgColor,
                 colorLight: bgColor,
                 correctLevel: QRCode.CorrectLevel.M,
-                quietZone: 4
+                quietZone: 4,
+                logo: uploadedLogo || '',
+                logoWidth: 60,
+                logoHeight: 60,
+                logoBackgroundColor: bgColor,
+                logoMargin: 4,
+                logoBorder: true,
+                logoBorderColor: bgColor
             };
             
-            try {
-                qrObject = new QRCode(container, options);
-            } catch(e) {
-                console.error('QR error:', e.message);
-            }
+            qrObject = new QRCode(container, options);
         }
 
         // Handle logo upload
@@ -457,28 +460,33 @@
         // Download QR code
         function downloadQR(format) {
             const canvas = document.querySelector('#qr-container canvas');
-            const img = document.querySelector('#qr-container img');
             
-            let link;
             if (format === 'png' && canvas) {
-                link = document.createElement('a');
+                // Download as PNG
+                const link = document.createElement('a');
                 link.download = 'qrcode.png';
                 link.href = canvas.toDataURL('image/png');
-            } else if (format === 'svg') {
-                // For SVG, we need to create an SVG element
-                const svgContainer = document.getElementById('qr-container');
-                const svgData = new XMLSerializer().serializeToString(svgContainer.querySelector('svg') || svgContainer.querySelector('canvas'));
-                link = document.createElement('a');
-                link.download = 'qrcode.svg';
-                link.href = 'data:image/svg+xml;base64,' + btoa(svgData);
-            } else if (img) {
-                link = document.createElement('a');
-                link.download = `qrcode.${format}`;
-                link.href = img.src;
-            }
-            
-            if (link) {
                 link.click();
+            } else if (format === 'svg') {
+                // Get SVG from QRCode object
+                if (qrObject && qrObject._qrCode) {
+                    const svgElement = qrObject._qrCode.getSvg();
+                    if (svgElement) {
+                        const svgData = new XMLSerializer().serializeToString(svgElement);
+                        const link = document.createElement('a');
+                        link.download = 'qrcode.svg';
+                        link.href = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                        link.click();
+                    }
+                }
+                // Fallback: download canvas as SVG if no native SVG support
+                if (!qrObject || !qrObject._qrCode) {
+                    const link = document.createElement('a');
+                    link.download = 'qrcode.svg';
+                    // Create simple SVG from canvas
+                    link.href = canvas.toDataURL('image/svg+xml');
+                    link.click();
+                }
             }
         }
 
