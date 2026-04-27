@@ -67,13 +67,20 @@
             align-items: center;
             min-height: 220px;
             background: #ffffff;
-            border-radius: 20px;
-            padding: 1rem;
+            border-radius: 24px;
+            padding: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .qr-canvas canvas, .qr-canvas img {
-            border-radius: 0 !important;
+            border-radius: 8px !important;
+        }
+        .qr-canvas.round-style {
+            border-radius: 24px;
+        }
+        .qr-canvas.round-style canvas, 
+        .qr-canvas.round-style img {
+            border-radius: 20px !important;
         }
         .tab-active {
             border-bottom: 3px solid var(--primary);
@@ -470,6 +477,18 @@
             };
             
             qrObject = new QRCode(container, options);
+            
+            // Apply round styling after QR renders
+            setTimeout(() => {
+                const canvas = container.querySelector('canvas');
+                if (canvas) {
+                    if (currentQRShape === 'round') {
+                        canvas.style.borderRadius = '20px';
+                    } else {
+                        canvas.style.borderRadius = '8px';
+                    }
+                }
+            }, 50);
         }
 
         // Handle logo upload
