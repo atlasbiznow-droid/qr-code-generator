@@ -245,12 +245,12 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Frame Style</label>
                             <select id="frame-style" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" onchange="generateQR()">
                                 <option value="none">No Frame</option>
-                                <option value="balloon-top">Balloon Top</option>
-                                <option value="balloon-bottom">Balloon Bottom</option>
-                                <option value="ribbon-top">Ribbon Top</option>
-                                <option value="ribbon-bottom">Ribbon Bottom</option>
-                                <option value="banner-top">Banner Top</option>
-                                <option value="banner-bottom">Banner Bottom</option>
+                                <option value="rounded">Rounded Square</option>
+                                <option value="circle">Circle</option>
+                                <option value="star">Star</option>
+                                <option value="leaf">Leaf</option>
+                                <option value="bubble">Speech Bubble</option>
+                                <option value="badge">Badge</option>
                             </select>
                         </div>
                         <div class="mt-4" id="frame-options" style="display:none;">
@@ -498,25 +498,11 @@
                 return;
             }
             
-            // QR base size
-            let baseWidth = 200;
-            let baseHeight = 200;
-            const frameHeight = frameStyle !== 'none' ? 40 : 0;
-            
-            // Adjust dimensions for frame
-            if (frameStyle.includes('top')) {
-                baseHeight += frameHeight;
-            } else if (frameStyle.includes('bottom')) {
-                baseHeight += frameHeight;
-            } else if (frameStyle.includes('banner')) {
-                baseHeight += frameHeight;
-            }
-            
-            // Options for QR generation
+            // Generate QR first on standard canvas
             const options = {
                 text: data,
-                width: baseWidth,
-                height: baseHeight,
+                width: 200,
+                height: 200,
                 colorDark: fgColor,
                 colorLight: bgColor,
                 correctLevel: QRCode.CorrectLevel.M,
@@ -548,7 +534,7 @@
             }, 50);
         }
         
-        // Apply frame to canvas for preview
+        // Apply decorative frame to canvas (like qr.io)
         function applyFrameToCanvas(canvas, frameStyle) {
             if (frameStyle === 'none' || !canvas) return;
             
@@ -556,37 +542,89 @@
             const frameText = document.getElementById('frame-text').value || 'SCAN ME';
             const frameColor = document.getElementById('frame-color').value || '#000000';
             const textColor = document.getElementById('text-color').value || '#ffffff';
-            const frameHeight = 40;
+            const w = canvas.width;
+            const h = canvas.height;
+            const frameWidth = 16;
             
-            ctx.fillStyle = frameColor;
-            ctx.fillStyle = textColor;
-            ctx.font = 'bold 18px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+            ctx.save();
             
-            if (frameStyle.includes('top')) {
-                ctx.fillStyle = frameColor;
-                ctx.fillRect(0, 0, canvas.width, frameHeight);
-                ctx.fillStyle = textColor;
-                ctx.fillText(frameText, canvas.width / 2, frameHeight / 2);
-            } else if (frameStyle.includes('bottom')) {
-                ctx.fillStyle = frameColor;
-                ctx.fillRect(0, canvas.height - frameHeight, canvas.width, frameHeight);
-                ctx.fillStyle = textColor;
-                ctx.fillText(frameText, canvas.width / 2, canvas.height - frameHeight / 2);
-            } else if (frameStyle === 'banner-top') {
-                ctx.fillStyle = frameColor;
-                ctx.fillRect(0, 0, canvas.width, frameHeight);
-                ctx.fillStyle = textColor;
-                ctx.font = 'bold 20px Arial';
-                ctx.fillText(frameText, canvas.width / 2, frameHeight / 2);
-            } else if (frameStyle === 'banner-bottom') {
-                ctx.fillStyle = frameColor;
-                ctx.fillRect(0, canvas.height - frameHeight, canvas.width, frameHeight);
-                ctx.fillStyle = textColor;
-                ctx.font = 'bold 20px Arial';
-                ctx.fillText(frameText, canvas.width / 2, canvas.height - frameHeight / 2);
+            // Draw frame path based on style
+            ctx.beginPath();
+            
+            if (frameStyle === 'rounded') {
+                // Rounded rectangle frame
+                const r = 20;
+                ctx.moveTo(r, 0);
+                ctx.lineTo(w - r, 0);
+                ctx.quadraticCurveTo(w, 0, w, r);
+                ctx.lineTo(w, h - r);
+                ctx.quadraticCurveTo(w, h, w - r, h);
+                ctx.lineTo(r, h);
+                ctx.quadraticCurveTo(0, h, 0, h - r);
+                ctx.lineTo(0, r);
+                ctx.quadraticCurveTo(0, 0, r, 0);
+            } else if (frameStyle === 'circle') {
+                // Circle frame
+                ctx.arc(w/2, h/2, Math.min(w, h)/2 - frameWidth, 0, Math.PI * 2);
+            } else if (frameStyle === 'star') {
+                // Star frame
+                const cx = w/2, cy = h/2, outerR = Math.min(w,h)/2 - 2, innerR = outerR * 0.5;
+                for (let i = 0; i < 10; i++) {
+                    const r = i % 2 === 0 ? outerR : innerR;
+                    const angle = (i * Math.PI / 5) - Math.PI/2;
+                    const x = cx + r * Math.cos(angle);
+                    const y = cy + r * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+            } else if (frameStyle === 'leaf') {
+                // Leaf/oval frame
+                ctx.ellipse(w/2, h/2, w/2 - frameWidth, h/2 - frameWidth, 0, 0, Math.PI * 2);
+            } else if (frameStyle === 'bubble') {
+                // Speech bubble frame
+                const tailSize = 25;
+                ctx.moveTo(20, 0);
+                ctx.lineTo(w - 20, 0);
+                ctx.quadraticCurveTo(w, 0, w, 20);
+                ctx.lineTo(w, h - 20 - tailSize);
+                ctx.quadraticCurveTo(w, h - tailSize, w - 20, h - tailSize);
+                ctx.lineTo(w/2 + 10, h - tailSize);
+                ctx.lineTo(w/2, h);
+                ctx.lineTo(w/2 - 10, h - tailSize);
+                ctx.lineTo(20, h - tailSize);
+                ctx.quadraticCurveTo(0, h - tailSize, 0, h - 20 - tailSize);
+                ctx.lineTo(0, 20);
+                ctx.quadraticCurveTo(0, 0, 20, 0);
+            } else if (frameStyle === 'badge') {
+                // Badge/shield frame
+                ctx.moveTo(w/2, 0);
+                ctx.lineTo(w - 8, 8);
+                ctx.lineTo(w - 4, h/2);
+                ctx.lineTo(w/2, h - 4);
+                ctx.lineTo(4, h/2);
+                ctx.lineTo(8, 8);
+                ctx.closePath();
             }
+            
+            // Fill frame background
+            ctx.fillStyle = frameColor;
+            ctx.fill();
+            
+            // Add text on frame (CTA)
+            if (frameText) {
+                ctx.fillStyle = textColor;
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                let textY = h/2;
+                if (frameStyle === 'badge') textY = h * 0.75;
+                
+                ctx.fillText(frameText, w/2, textY);
+            }
+            
+            ctx.restore();
         }
 
         // Handle logo upload
@@ -614,133 +652,35 @@
             }
             
             const frameStyle = document.getElementById('frame-style').value;
-            const frameText = document.getElementById('frame-text').value || 'SCAN ME';
-            const frameColor = document.getElementById('frame-color').value || '#000000';
-            const textColor = document.getElementById('text-color').value || '#ffffff';
-            
-            const baseSize = canvas.width || 200;
-            const borderWidth = Math.round(baseSize * 0.08);
-            const bgColor = document.getElementById('color-bg').value || '#ffffff';
-            const frameHeight = 40;
             
             if (format === 'png') {
-                let totalSize = baseSize + borderWidth * 2;
-                let totalHeight = totalSize;
-                
                 const link = document.createElement('a');
                 link.download = 'qrcode.png';
-                
-                const tempCanvas = document.createElement('canvas');
-                
-                // Adjust for frame
-                if (frameStyle !== 'none') {
-                    if (frameStyle.includes('top')) {
-                        tempCanvas.width = baseSize + borderWidth * 2;
-                        tempCanvas.height = totalSize + frameHeight;
-                    } else if (frameStyle.includes('bottom') || frameStyle === 'banner-bottom') {
-                        tempCanvas.width = baseSize + borderWidth * 2;
-                        tempCanvas.height = totalSize + frameHeight;
-                    } else if (frameStyle === 'banner-top') {
-                        tempCanvas.width = baseSize + borderWidth * 2;
-                        tempCanvas.height = totalSize + frameHeight;
-                    }
-                } else {
-                    tempCanvas.width = totalSize;
-                    tempCanvas.height = totalSize;
-                }
-                
-                const ctx = tempCanvas.getContext('2d');
-                
-                // Draw frame first if present
-                if (frameStyle !== 'none') {
-                    ctx.fillStyle = frameColor;
-                    if (frameStyle.includes('top') || frameStyle === 'banner-top') {
-                        ctx.fillRect(0, 0, tempCanvas.width, frameHeight);
-                    } else if (frameStyle.includes('bottom') || frameStyle === 'banner-bottom') {
-                        ctx.fillRect(0, tempCanvas.height - frameHeight, tempCanvas.width, frameHeight);
-                    }
-                    // Draw frame text
-                    ctx.fillStyle = textColor;
-                    ctx.font = 'bold 20px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    if (frameStyle.includes('top') || frameStyle === 'banner-top') {
-                        ctx.fillText(frameText, tempCanvas.width / 2, frameHeight / 2);
-                    } else {
-                        ctx.fillText(frameText, tempCanvas.width / 2, tempCanvas.height - frameHeight / 2);
-                    }
-                }
-                
-                if (currentQRShape === 'round') {
-                    // Black circular border
-                    const qrStart = frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth;
-                    ctx.fillStyle = '#000000';
-                    ctx.beginPath();
-                    ctx.arc(tempCanvas.width/2, qrStart + baseSize/2, baseSize/2 - 1, 0, Math.PI * 2);
-                    ctx.fill();
-                    // Inner white circle
-                    ctx.fillStyle = bgColor;
-                    ctx.beginPath();
-                    ctx.arc(tempCanvas.width/2, qrStart + baseSize/2, baseSize/2 + borderWidth/2, 0, Math.PI * 2);
-                    ctx.fill();
-                    // Clip and draw QR
-                    ctx.beginPath();
-                    ctx.arc(qrStart + baseSize/2, qrStart + baseSize/2, baseSize/2, 0, Math.PI * 2);
-                    ctx.closePath();
-                    ctx.clip();
-                    ctx.drawImage(canvas, frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth : borderWidth, frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth);
-                } else {
-                    // Square with border
-                    const qrX = (tempCanvas.width - baseSize) / 2;
-                    const qrY = frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth;
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(qrX - borderWidth, qrY - borderWidth, baseSize + borderWidth * 2, baseSize + borderWidth * 2);
-                    ctx.fillStyle = bgColor;
-                    ctx.fillRect(qrX, qrY, baseSize, baseSize);
-                    ctx.drawImage(canvas, qrX, qrY);
-                }
-                
-                link.href = tempCanvas.toDataURL('image/png');
+                link.href = canvas.toDataURL('image/png');
                 link.click();
             } else if (format === 'svg') {
-                const pngData = canvas.toDataURL('image/png');
-                let totalSize = baseSize + borderWidth * 2;
-                let svgWidth = totalSize;
-                let svgHeight = totalSize;
-                let frameSvg = '';
-                
-                if (frameStyle !== 'none') {
-                    svgHeight = totalSize + frameHeight;
-                    if (frameStyle.includes('top') || frameStyle === 'banner-top') {
-                        frameSvg = `<rect x="0" y="0" width="${svgWidth}" height="${frameHeight}" fill="${frameColor}"/><text x="${svgWidth/2}" y="${frameHeight/2}" fill="${textColor}" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" dominant-baseline="middle">${frameText}</text>`;
-                    } else {
-                        frameSvg = `<rect x="0" y="${totalSize}" width="${svgWidth}" height="${frameHeight}" fill="${frameColor}"/><text x="${svgWidth/2}" y="${totalSize + frameHeight/2}" fill="${textColor}" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" dominant-baseline="middle">${frameText}</text>`;
-                    }
-                }
+                const ctx = canvas.getContext('2d');
+                const frameColor = document.getElementById('frame-color').value || '#000000';
+                const textColor = document.getElementById('text-color').value || '#ffffff';
+                const frameText = document.getElementById('frame-text').value || 'SCAN ME';
+                const w = canvas.width;
+                const h = canvas.height;
                 
                 let svgContent;
-                if (currentQRShape === 'round') {
-                    const qrOffset = frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth;
+                if (frameStyle === 'none') {
+                    const pngData = canvas.toDataURL('image/png');
                     svgContent = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}">
-  ${frameSvg}
-  <circle cx="${svgWidth/2}" cy="${qrOffset + baseSize/2}" r="${baseSize/2 - 1}" fill="#000000"/>
-  <circle cx="${svgWidth/2}" cy="${qrOffset + baseSize/2}" r="${baseSize/2 + borderWidth/2}" fill="${bgColor}"/>
-  <defs>
-    <clipPath id="circleClip">
-      <circle cx="${qrOffset + baseSize/2}" cy="${qrOffset + baseSize/2}" r="${baseSize/2}"/>
-    </clipPath>
-  </defs>
-  <image x="${qrOffset}" y="${qrOffset}" width="${baseSize}" height="${baseSize}" xlink:href="${pngData}" clip-path="url(#circleClip)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <image width="${w}" height="${h}" xlink:href="${pngData}"/>
 </svg>`;
                 } else {
-                    const qrOffset = frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth;
+                    const pngData = canvas.toDataURL('image/png');
+                    const framePath = getSVGFramePath(frameStyle, w, h);
                     svgContent = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}">
-  ${frameSvg}
-  <rect x="${qrOffset - borderWidth}" y="${qrOffset - borderWidth}" width="${baseSize + borderWidth * 2}" height="${baseSize + borderWidth * 2}" fill="#000000"/>
-  <rect x="${qrOffset}" y="${qrOffset}" width="${baseSize}" height="${baseSize}" fill="${bgColor}"/>
-  <image x="${qrOffset}" y="${qrOffset}" width="${baseSize}" height="${baseSize}" xlink:href="${pngData}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <path d="${framePath}" fill="${frameColor}"/>
+  <text x="${w/2}" y="${h * 0.85}" fill="${textColor}" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle">${frameText}</text>
+  <image x="0" y="0" width="${w}" height="${h}" xlink:href="${pngData}"/>
 </svg>`;
                 }
                 
@@ -751,6 +691,26 @@
                 link.click();
                 setTimeout(() => URL.revokeObjectURL(link.href), 1000);
             }
+        }
+        
+        // Get SVG frame path
+        function getSVGFramePath(style, w, h) {
+            if (style === 'rounded') {
+                const r = 20;
+                return `M ${r},0 L ${w-r},0 Q ${w},0 ${w},${r} L ${w},${h-r} Q ${w},${h} ${w-r},${h} L ${r},${h} Q 0,${h} 0,${h-r} L 0,${r} Q 0,0 ${r},0 Z`;
+            } else if (style === 'circle') {
+                const cx = w/2, cy = h/2, r = Math.min(w,h)/2 - 2;
+                return `M ${cx+r},${cy} A ${r} ${r} 0 1 1 ${cx-r},${cy} A ${r} ${r} 0 1 1 ${cx+r},${cy}`;
+            } else if (style === 'leaf') {
+                const cx = w/2, cy = h/2, rx = w/2 - 2, ry = h/2 - 2;
+                return `M ${cx},${cy-ry} A ${rx} ${ry} 0 1 0 ${cx},${cy+ry} A ${rx} ${ry} 0 1 0 ${cx},${cy-ry}`;
+            } else if (style === 'bubble') {
+                const ts = 25;
+                return `M 20,0 L ${w-20},0 Q ${w},0 ${w},20 L ${w},${h-ts-20} Q ${w},${h-ts} ${w-20},${h-ts} L ${w/2+10},${h-ts} L ${w/2},${h} L ${w/2-10},${h-ts} L 20,${h-ts} Q 0,${h-ts} 0,${h-ts-20} L 0,20 Q 0,0 20,0 Z`;
+            } else if (style === 'badge') {
+                return `M ${w/2},0 L ${w-8},8 L ${w-4},${h/2} L ${w/2},${h-4} L 4,${h/2} L 8,8 Z`;
+            }
+            return '';
         }
 
         // Initialize
