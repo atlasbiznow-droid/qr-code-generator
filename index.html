@@ -65,10 +65,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 280px;
+            min-height: 220px;
             background: #f8fafc;
             border-radius: 1rem;
-            padding: 1.5rem;
+            padding: 1rem;
         }
         .tab-active {
             border-bottom: 3px solid var(--primary);
@@ -424,18 +424,18 @@
             // Options for QR generation
             const options = {
                 text: data,
-                width: 250,
-                height: 250,
+                width: 200,
+                height: 200,
                 colorDark: fgColor,
                 colorLight: bgColor,
                 correctLevel: QRCode.CorrectLevel.M,
-                quietZone: 4,
+                quietZone: 2,
                 logo: uploadedLogo || '',
-                logoWidth: 60,
-                logoHeight: 60,
+                logoWidth: 40,
+                logoHeight: 40,
                 logoBackgroundColor: bgColor,
-                logoMargin: 4,
-                logoBorder: true,
+                logoMargin: 2,
+                logoBorder: false,
                 logoBorderColor: bgColor
             };
             
