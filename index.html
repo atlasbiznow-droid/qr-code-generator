@@ -241,6 +241,34 @@
                                 <button onclick="setQRShape('round')" id="shape-dot" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition">Round</button>
                             </div>
                         </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Frame Style</label>
+                            <select id="frame-style" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" onchange="generateQR()">
+                                <option value="none">No Frame</option>
+                                <option value="balloon-top">Balloon Top</option>
+                                <option value="balloon-bottom">Balloon Bottom</option>
+                                <option value="ribbon-top">Ribbon Top</option>
+                                <option value="ribbon-bottom">Ribbon Bottom</option>
+                                <option value="banner-top">Banner Top</option>
+                                <option value="banner-bottom">Banner Bottom</option>
+                            </select>
+                        </div>
+                        <div class="mt-4" id="frame-options" style="display:none;">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Frame Text</label>
+                                    <input type="text" id="frame-text" value="SCAN ME" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Frame Color</label>
+                                    <input type="color" id="frame-color" value="#000000" class="w-full h-12 border border-gray-300 rounded-lg cursor-pointer" oninput="generateQR()">
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
+                                <input type="color" id="text-color" value="#ffffff" class="w-full h-12 border border-gray-300 rounded-lg cursor-pointer" oninput="generateQR()">
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -456,6 +484,11 @@
             const container = document.getElementById('qr-container');
             const fgColor = document.getElementById('color-fg').value;
             const bgColor = document.getElementById('color-bg').value;
+            const frameStyle = document.getElementById('frame-style').value;
+            
+            // Show/hide frame options
+            const frameOptions = document.getElementById('frame-options');
+            frameOptions.style.display = frameStyle === 'none' ? 'none' : 'block';
             
             // Clear container
             container.innerHTML = '';
@@ -465,11 +498,25 @@
                 return;
             }
             
+            // QR base size
+            let baseWidth = 200;
+            let baseHeight = 200;
+            const frameHeight = frameStyle !== 'none' ? 40 : 0;
+            
+            // Adjust dimensions for frame
+            if (frameStyle.includes('top')) {
+                baseHeight += frameHeight;
+            } else if (frameStyle.includes('bottom')) {
+                baseHeight += frameHeight;
+            } else if (frameStyle.includes('banner')) {
+                baseHeight += frameHeight;
+            }
+            
             // Options for QR generation
             const options = {
                 text: data,
-                width: 200,
-                height: 200,
+                width: baseWidth,
+                height: baseHeight,
                 colorDark: fgColor,
                 colorLight: bgColor,
                 correctLevel: QRCode.CorrectLevel.M,
@@ -486,18 +533,60 @@
             
             qrObject = new QRCode(container, options);
             
-            // QR always square for scanning - only container styling
+            // Apply frame styling after QR is generated
             setTimeout(() => {
                 const canvas = container.querySelector('canvas');
                 if (canvas) {
                     canvas.style.borderRadius = '0';
+                    applyFrameToCanvas(canvas, frameStyle);
                 }
-                if (currentQRShape === 'round') {
+                if (currentQRShape === 'round' && frameStyle === 'none') {
                     container.className = 'qr-canvas round-style';
                 } else {
                     container.className = 'qr-canvas';
                 }
             }, 50);
+        }
+        
+        // Apply frame to canvas for preview
+        function applyFrameToCanvas(canvas, frameStyle) {
+            if (frameStyle === 'none' || !canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const frameText = document.getElementById('frame-text').value || 'SCAN ME';
+            const frameColor = document.getElementById('frame-color').value || '#000000';
+            const textColor = document.getElementById('text-color').value || '#ffffff';
+            const frameHeight = 40;
+            
+            ctx.fillStyle = frameColor;
+            ctx.fillStyle = textColor;
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            if (frameStyle.includes('top')) {
+                ctx.fillStyle = frameColor;
+                ctx.fillRect(0, 0, canvas.width, frameHeight);
+                ctx.fillStyle = textColor;
+                ctx.fillText(frameText, canvas.width / 2, frameHeight / 2);
+            } else if (frameStyle.includes('bottom')) {
+                ctx.fillStyle = frameColor;
+                ctx.fillRect(0, canvas.height - frameHeight, canvas.width, frameHeight);
+                ctx.fillStyle = textColor;
+                ctx.fillText(frameText, canvas.width / 2, canvas.height - frameHeight / 2);
+            } else if (frameStyle === 'banner-top') {
+                ctx.fillStyle = frameColor;
+                ctx.fillRect(0, 0, canvas.width, frameHeight);
+                ctx.fillStyle = textColor;
+                ctx.font = 'bold 20px Arial';
+                ctx.fillText(frameText, canvas.width / 2, frameHeight / 2);
+            } else if (frameStyle === 'banner-bottom') {
+                ctx.fillStyle = frameColor;
+                ctx.fillRect(0, canvas.height - frameHeight, canvas.width, frameHeight);
+                ctx.fillStyle = textColor;
+                ctx.font = 'bold 20px Arial';
+                ctx.fillText(frameText, canvas.width / 2, canvas.height - frameHeight / 2);
+            }
         }
 
         // Handle logo upload
@@ -524,25 +613,137 @@
                 return;
             }
             
-            // Temporarily remove border-radius for clean download
-            const originalBorderRadius = canvas.style.borderRadius;
-            canvas.style.borderRadius = '0';
+            const frameStyle = document.getElementById('frame-style').value;
+            const frameText = document.getElementById('frame-text').value || 'SCAN ME';
+            const frameColor = document.getElementById('frame-color').value || '#000000';
+            const textColor = document.getElementById('text-color').value || '#ffffff';
+            
+            const baseSize = canvas.width || 200;
+            const borderWidth = Math.round(baseSize * 0.08);
+            const bgColor = document.getElementById('color-bg').value || '#ffffff';
+            const frameHeight = 40;
             
             if (format === 'png') {
-                // Download as PNG
+                let totalSize = baseSize + borderWidth * 2;
+                let totalHeight = totalSize;
+                
                 const link = document.createElement('a');
                 link.download = 'qrcode.png';
-                link.href = canvas.toDataURL('image/png');
+                
+                const tempCanvas = document.createElement('canvas');
+                
+                // Adjust for frame
+                if (frameStyle !== 'none') {
+                    if (frameStyle.includes('top')) {
+                        tempCanvas.width = baseSize + borderWidth * 2;
+                        tempCanvas.height = totalSize + frameHeight;
+                    } else if (frameStyle.includes('bottom') || frameStyle === 'banner-bottom') {
+                        tempCanvas.width = baseSize + borderWidth * 2;
+                        tempCanvas.height = totalSize + frameHeight;
+                    } else if (frameStyle === 'banner-top') {
+                        tempCanvas.width = baseSize + borderWidth * 2;
+                        tempCanvas.height = totalSize + frameHeight;
+                    }
+                } else {
+                    tempCanvas.width = totalSize;
+                    tempCanvas.height = totalSize;
+                }
+                
+                const ctx = tempCanvas.getContext('2d');
+                
+                // Draw frame first if present
+                if (frameStyle !== 'none') {
+                    ctx.fillStyle = frameColor;
+                    if (frameStyle.includes('top') || frameStyle === 'banner-top') {
+                        ctx.fillRect(0, 0, tempCanvas.width, frameHeight);
+                    } else if (frameStyle.includes('bottom') || frameStyle === 'banner-bottom') {
+                        ctx.fillRect(0, tempCanvas.height - frameHeight, tempCanvas.width, frameHeight);
+                    }
+                    // Draw frame text
+                    ctx.fillStyle = textColor;
+                    ctx.font = 'bold 20px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    if (frameStyle.includes('top') || frameStyle === 'banner-top') {
+                        ctx.fillText(frameText, tempCanvas.width / 2, frameHeight / 2);
+                    } else {
+                        ctx.fillText(frameText, tempCanvas.width / 2, tempCanvas.height - frameHeight / 2);
+                    }
+                }
+                
+                if (currentQRShape === 'round') {
+                    // Black circular border
+                    const qrStart = frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth;
+                    ctx.fillStyle = '#000000';
+                    ctx.beginPath();
+                    ctx.arc(tempCanvas.width/2, qrStart + baseSize/2, baseSize/2 - 1, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Inner white circle
+                    ctx.fillStyle = bgColor;
+                    ctx.beginPath();
+                    ctx.arc(tempCanvas.width/2, qrStart + baseSize/2, baseSize/2 + borderWidth/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Clip and draw QR
+                    ctx.beginPath();
+                    ctx.arc(qrStart + baseSize/2, qrStart + baseSize/2, baseSize/2, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(canvas, frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth : borderWidth, frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth);
+                } else {
+                    // Square with border
+                    const qrX = (tempCanvas.width - baseSize) / 2;
+                    const qrY = frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth;
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(qrX - borderWidth, qrY - borderWidth, baseSize + borderWidth * 2, baseSize + borderWidth * 2);
+                    ctx.fillStyle = bgColor;
+                    ctx.fillRect(qrX, qrY, baseSize, baseSize);
+                    ctx.drawImage(canvas, qrX, qrY);
+                }
+                
+                link.href = tempCanvas.toDataURL('image/png');
                 link.click();
             } else if (format === 'svg') {
-                // Create SVG from canvas - always square
-                const w = canvas.width || 200;
-                const h = canvas.height || 200;
                 const pngData = canvas.toDataURL('image/png');
-                const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-  <image width="${w}" height="${h}" xlink:href="${pngData}"/>
+                let totalSize = baseSize + borderWidth * 2;
+                let svgWidth = totalSize;
+                let svgHeight = totalSize;
+                let frameSvg = '';
+                
+                if (frameStyle !== 'none') {
+                    svgHeight = totalSize + frameHeight;
+                    if (frameStyle.includes('top') || frameStyle === 'banner-top') {
+                        frameSvg = `<rect x="0" y="0" width="${svgWidth}" height="${frameHeight}" fill="${frameColor}"/><text x="${svgWidth/2}" y="${frameHeight/2}" fill="${textColor}" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" dominant-baseline="middle">${frameText}</text>`;
+                    } else {
+                        frameSvg = `<rect x="0" y="${totalSize}" width="${svgWidth}" height="${frameHeight}" fill="${frameColor}"/><text x="${svgWidth/2}" y="${totalSize + frameHeight/2}" fill="${textColor}" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" dominant-baseline="middle">${frameText}</text>`;
+                    }
+                }
+                
+                let svgContent;
+                if (currentQRShape === 'round') {
+                    const qrOffset = frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth;
+                    svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}">
+  ${frameSvg}
+  <circle cx="${svgWidth/2}" cy="${qrOffset + baseSize/2}" r="${baseSize/2 - 1}" fill="#000000"/>
+  <circle cx="${svgWidth/2}" cy="${qrOffset + baseSize/2}" r="${baseSize/2 + borderWidth/2}" fill="${bgColor}"/>
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="${qrOffset + baseSize/2}" cy="${qrOffset + baseSize/2}" r="${baseSize/2}"/>
+    </clipPath>
+  </defs>
+  <image x="${qrOffset}" y="${qrOffset}" width="${baseSize}" height="${baseSize}" xlink:href="${pngData}" clip-path="url(#circleClip)"/>
 </svg>`;
+                } else {
+                    const qrOffset = frameStyle.includes('top') || frameStyle === 'banner-top' ? borderWidth + frameHeight : borderWidth;
+                    svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}">
+  ${frameSvg}
+  <rect x="${qrOffset - borderWidth}" y="${qrOffset - borderWidth}" width="${baseSize + borderWidth * 2}" height="${baseSize + borderWidth * 2}" fill="#000000"/>
+  <rect x="${qrOffset}" y="${qrOffset}" width="${baseSize}" height="${baseSize}" fill="${bgColor}"/>
+  <image x="${qrOffset}" y="${qrOffset}" width="${baseSize}" height="${baseSize}" xlink:href="${pngData}"/>
+</svg>`;
+                }
+                
                 const blob = new Blob([svgContent], {type: 'image/svg+xml'});
                 const link = document.createElement('a');
                 link.download = 'qrcode.svg';
@@ -550,9 +751,6 @@
                 link.click();
                 setTimeout(() => URL.revokeObjectURL(link.href), 1000);
             }
-            
-            // Restore border-radius
-            canvas.style.borderRadius = originalBorderRadius;
         }
 
         // Initialize
