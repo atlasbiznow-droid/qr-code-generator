@@ -70,6 +70,9 @@
             border-radius: 1rem;
             padding: 1rem;
         }
+        .qr-canvas.round-style canvas {
+            border-radius: 12px;
+        }
         .tab-active {
             border-bottom: 3px solid var(--primary);
             color: var(--primary);
@@ -465,6 +468,11 @@
             };
             
             qrObject = new QRCode(container, options);
+            
+            // Apply round CSS styling if selected
+            if (currentQRShape === 'round') {
+                container.className = 'qr-canvas round-style';
+            }
         }
 
         // Handle logo upload
