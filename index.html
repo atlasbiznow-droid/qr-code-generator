@@ -473,27 +473,32 @@
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             } else if (format === 'svg') {
-                // Get SVG element directly
+                // Try to get native SVG from library
                 const svgEl = document.querySelector('#qr-container svg');
                 if (svgEl) {
+                    // Native SVG - download as-is
                     const svgData = new XMLSerializer().serializeToString(svgEl);
                     const blob = new Blob([svgData], {type: 'image/svg+xml'});
                     const link = document.createElement('a');
                     link.download = 'qrcode.svg';
                     link.href = URL.createObjectURL(blob);
                     link.click();
-                    URL.revokeObjectURL(link.href);
+                    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
                 } else {
-                    // Fallback: create SVG from canvas size
-                    const w = canvas.width;
-                    const h = canvas.height;
-                    const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><image href="${canvas.toDataURL('image/png')}" width="${w}" height="${h}"/></svg>`;
-                    const blob = new Blob([svgData], {type: 'image/svg+xml'});
+                    // Canvas fallback - wrap PNG in SVG container
+                    const w = canvas.width || 250;
+                    const h = canvas.height || 250;
+                    const pngData = canvas.toDataURL('image/png');
+                    const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <image width="${w}" height="${h}" xlink:href="${pngData}"/>
+</svg>`;
+                    const blob = new Blob([svgContent], {type: 'image/svg+xml'});
                     const link = document.createElement('a');
                     link.download = 'qrcode.svg';
                     link.href = URL.createObjectURL(blob);
                     link.click();
-                    URL.revokeObjectURL(link.href);
+                    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
                 }
             }
         }
