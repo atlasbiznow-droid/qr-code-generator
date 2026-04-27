@@ -30,7 +30,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Easy QRCode Library -->
-    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.6.1/easy.qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs/dist/easy.qrcode.min.js"></script>
     
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
@@ -428,18 +428,41 @@
                 height: 250,
                 colorDark: fgColor,
                 colorLight: bgColor,
-                correctLevel: QRCode.CorrectLevel.H,
+                correctLevel: 'H',
                 logo: uploadedLogo,
                 logoWidth: 50,
                 logoHeight: 50,
                 logoBackgroundColor: bgColor,
-                quietZone: 10
+                quietZone: 10,
+                dotScale: 1,
+                backgroundImage: '',
+                backgroundImageOpacity: 1,
+                autoColor: true,
+                autoWidth: false,
+                binarize: false,
+                border: 4,
+                cellBar: "square",
+                dotScale: 1,
+                padding: 10,
+                positionAbsolute: false,
+                positionX: 0,
+                positionY: 0,
+                title: '',
+                titleFont: 'bold 16px Arial',
+                titleColor: '#000000',
+                titleHeight: 50,
+                titleTop: 30
             };
             
             try {
+                if (typeof QRCode === 'undefined') {
+                    container.innerHTML = '<p class="text-red-400 text-center">QR library loading...</p>';
+                    return;
+                }
                 qrObject = new QRCode(container, options);
             } catch(e) {
                 console.error('QR generation error:', e);
+                container.innerHTML = '<p class="text-red-400 text-center">Error: ' + e.message + '</p>';
             }
         }
 
