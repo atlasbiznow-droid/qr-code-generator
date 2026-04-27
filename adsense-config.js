@@ -17,19 +17,19 @@ const AdSenseConfig = {
         // Top leaderboard (typically 728x90 or responsive)
         leaderboard: {
             adClient: 'ca-pub-1671032738156637',
-            adSlot: 'YOUR_AD_SLOT_ID_1'
+            adSlot: '2143184897'
         },
         
         // Sidebar (typically 300x250)
         sidebar: {
             adClient: 'ca-pub-1671032738156637',
-            adSlot: 'YOUR_AD_SLOT_ID_2'
+            adSlot: '6733391932'
         },
         
         // In-content (typically 300x250 or responsive)
         inContent: {
             adClient: 'ca-pub-1671032738156637',
-            adSlot: 'YOUR_AD_SLOT_ID_3'
+            adSlot: '2937391812'
         }
     },
     
