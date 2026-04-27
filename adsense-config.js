@@ -10,31 +10,31 @@
 
 const AdSenseConfig = {
     // Your Google AdSense Publisher ID
-    publisherId: 'YOUR_PUBLISHER_ID',
+    publisherId: 'pub-1671032738156637',
     
     // Ad Unit IDs for different placements
     adUnits: {
         // Top leaderboard (typically 728x90 or responsive)
         leaderboard: {
-            adClient: 'ca-pub-YOUR_PUBLISHER_ID',
+            adClient: 'ca-pub-1671032738156637',
             adSlot: 'YOUR_AD_SLOT_ID_1'
         },
         
         // Sidebar (typically 300x250)
         sidebar: {
-            adClient: 'ca-pub-YOUR_PUBLISHER_ID',
+            adClient: 'ca-pub-1671032738156637',
             adSlot: 'YOUR_AD_SLOT_ID_2'
         },
         
         // In-content (typically 300x250 or responsive)
         inContent: {
-            adClient: 'ca-pub-YOUR_PUBLISHER_ID',
+            adClient: 'ca-pub-1671032738156637',
             adSlot: 'YOUR_AD_SLOT_ID_3'
         }
     },
     
     // Enable/disable ads (set to false for development)
-    enabled: false,
+    enabled: true,
     
     // Test mode - shows test ads (set to true initially)
     testMode: true
