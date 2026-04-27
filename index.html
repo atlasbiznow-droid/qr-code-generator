@@ -73,11 +73,10 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .qr-canvas canvas, .qr-canvas img {
-            border-radius: 8px !important;
+            border-radius: 0 !important;
         }
-        .qr-canvas.round-style canvas,
-        .qr-canvas.round-style img {
-            border-radius: 50% !important;
+        .qr-canvas.round-style {
+            border-radius: 24px;
         }
         .tab-active {
             border-bottom: 3px solid var(--primary);
@@ -475,17 +474,16 @@
             
             qrObject = new QRCode(container, options);
             
-            // Apply round styling after QR renders
+            // QR always square for scanning - only container styling
             setTimeout(() => {
                 const canvas = container.querySelector('canvas');
                 if (canvas) {
-                    if (currentQRShape === 'round') {
-                        container.className = 'qr-canvas round-style';
-                        canvas.style.borderRadius = '50%';
-                    } else {
-                        container.className = 'qr-canvas';
-                        canvas.style.borderRadius = '8px';
-                    }
+                    canvas.style.borderRadius = '0';
+                }
+                if (currentQRShape === 'round') {
+                    container.className = 'qr-canvas round-style';
+                } else {
+                    container.className = 'qr-canvas';
                 }
             }, 50);
         }
