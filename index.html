@@ -241,34 +241,6 @@
                                 <button onclick="setQRShape('round')" id="shape-dot" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition">Round</button>
                             </div>
                         </div>
-                        <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Frame Style</label>
-                            <select id="frame-style" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" onchange="generateQR()">
-                                <option value="none">No Frame</option>
-                                <option value="rounded">Rounded Square</option>
-                                <option value="circle">Circle</option>
-                                <option value="star">Star</option>
-                                <option value="leaf">Leaf</option>
-                                <option value="bubble">Speech Bubble</option>
-                                <option value="badge">Badge</option>
-                            </select>
-                        </div>
-                        <div class="mt-4" id="frame-options" style="display:none;">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Frame Text</label>
-                                    <input type="text" id="frame-text" value="SCAN ME" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Frame Color</label>
-                                    <input type="color" id="frame-color" value="#000000" class="w-full h-12 border border-gray-300 rounded-lg cursor-pointer" oninput="generateQR()">
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
-                                <input type="color" id="text-color" value="#ffffff" class="w-full h-12 border border-gray-300 rounded-lg cursor-pointer" oninput="generateQR()">
-                            </div>
-                        </div>
                     </div>
 
                 </div>
@@ -484,11 +456,6 @@
             const container = document.getElementById('qr-container');
             const fgColor = document.getElementById('color-fg').value;
             const bgColor = document.getElementById('color-bg').value;
-            const frameStyle = document.getElementById('frame-style').value;
-            
-            // Show/hide frame options
-            const frameOptions = document.getElementById('frame-options');
-            frameOptions.style.display = frameStyle === 'none' ? 'none' : 'block';
             
             // Clear container
             container.innerHTML = '';
@@ -498,7 +465,7 @@
                 return;
             }
             
-            // Generate QR first on standard canvas
+            // Generate QR code
             const options = {
                 text: data,
                 width: 200,
@@ -519,112 +486,18 @@
             
             qrObject = new QRCode(container, options);
             
-            // Apply frame styling after QR is generated
+            // Apply shape styling after QR is generated
             setTimeout(() => {
                 const canvas = container.querySelector('canvas');
                 if (canvas) {
                     canvas.style.borderRadius = '0';
-                    applyFrameToCanvas(canvas, frameStyle);
                 }
-                if (currentQRShape === 'round' && frameStyle === 'none') {
+                if (currentQRShape === 'round') {
                     container.className = 'qr-canvas round-style';
                 } else {
                     container.className = 'qr-canvas';
                 }
             }, 50);
-        }
-        
-        // Apply decorative frame to canvas (like qr.io)
-        function applyFrameToCanvas(canvas, frameStyle) {
-            if (frameStyle === 'none' || !canvas) return;
-            
-            const ctx = canvas.getContext('2d');
-            const frameText = document.getElementById('frame-text').value || 'SCAN ME';
-            const frameColor = document.getElementById('frame-color').value || '#000000';
-            const textColor = document.getElementById('text-color').value || '#ffffff';
-            const w = canvas.width;
-            const h = canvas.height;
-            const frameWidth = 16;
-            
-            ctx.save();
-            
-            // Draw frame path based on style
-            ctx.beginPath();
-            
-            if (frameStyle === 'rounded') {
-                // Rounded rectangle frame
-                const r = 20;
-                ctx.moveTo(r, 0);
-                ctx.lineTo(w - r, 0);
-                ctx.quadraticCurveTo(w, 0, w, r);
-                ctx.lineTo(w, h - r);
-                ctx.quadraticCurveTo(w, h, w - r, h);
-                ctx.lineTo(r, h);
-                ctx.quadraticCurveTo(0, h, 0, h - r);
-                ctx.lineTo(0, r);
-                ctx.quadraticCurveTo(0, 0, r, 0);
-            } else if (frameStyle === 'circle') {
-                // Circle frame
-                ctx.arc(w/2, h/2, Math.min(w, h)/2 - frameWidth, 0, Math.PI * 2);
-            } else if (frameStyle === 'star') {
-                // Star frame
-                const cx = w/2, cy = h/2, outerR = Math.min(w,h)/2 - 2, innerR = outerR * 0.5;
-                for (let i = 0; i < 10; i++) {
-                    const r = i % 2 === 0 ? outerR : innerR;
-                    const angle = (i * Math.PI / 5) - Math.PI/2;
-                    const x = cx + r * Math.cos(angle);
-                    const y = cy + r * Math.sin(angle);
-                    if (i === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.closePath();
-            } else if (frameStyle === 'leaf') {
-                // Leaf/oval frame
-                ctx.ellipse(w/2, h/2, w/2 - frameWidth, h/2 - frameWidth, 0, 0, Math.PI * 2);
-            } else if (frameStyle === 'bubble') {
-                // Speech bubble frame
-                const tailSize = 25;
-                ctx.moveTo(20, 0);
-                ctx.lineTo(w - 20, 0);
-                ctx.quadraticCurveTo(w, 0, w, 20);
-                ctx.lineTo(w, h - 20 - tailSize);
-                ctx.quadraticCurveTo(w, h - tailSize, w - 20, h - tailSize);
-                ctx.lineTo(w/2 + 10, h - tailSize);
-                ctx.lineTo(w/2, h);
-                ctx.lineTo(w/2 - 10, h - tailSize);
-                ctx.lineTo(20, h - tailSize);
-                ctx.quadraticCurveTo(0, h - tailSize, 0, h - 20 - tailSize);
-                ctx.lineTo(0, 20);
-                ctx.quadraticCurveTo(0, 0, 20, 0);
-            } else if (frameStyle === 'badge') {
-                // Badge/shield frame
-                ctx.moveTo(w/2, 0);
-                ctx.lineTo(w - 8, 8);
-                ctx.lineTo(w - 4, h/2);
-                ctx.lineTo(w/2, h - 4);
-                ctx.lineTo(4, h/2);
-                ctx.lineTo(8, 8);
-                ctx.closePath();
-            }
-            
-            // Fill frame background
-            ctx.fillStyle = frameColor;
-            ctx.fill();
-            
-            // Add text on frame (CTA)
-            if (frameText) {
-                ctx.fillStyle = textColor;
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                let textY = h/2;
-                if (frameStyle === 'badge') textY = h * 0.75;
-                
-                ctx.fillText(frameText, w/2, textY);
-            }
-            
-            ctx.restore();
         }
 
         // Handle logo upload
@@ -651,38 +524,20 @@
                 return;
             }
             
-            const frameStyle = document.getElementById('frame-style').value;
-            
             if (format === 'png') {
                 const link = document.createElement('a');
                 link.download = 'qrcode.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             } else if (format === 'svg') {
-                const ctx = canvas.getContext('2d');
-                const frameColor = document.getElementById('frame-color').value || '#000000';
-                const textColor = document.getElementById('text-color').value || '#ffffff';
-                const frameText = document.getElementById('frame-text').value || 'SCAN ME';
                 const w = canvas.width;
                 const h = canvas.height;
+                const pngData = canvas.toDataURL('image/png');
                 
-                let svgContent;
-                if (frameStyle === 'none') {
-                    const pngData = canvas.toDataURL('image/png');
-                    svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+                const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <image width="${w}" height="${h}" xlink:href="${pngData}"/>
 </svg>`;
-                } else {
-                    const pngData = canvas.toDataURL('image/png');
-                    const framePath = getSVGFramePath(frameStyle, w, h);
-                    svgContent = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-  <path d="${framePath}" fill="${frameColor}"/>
-  <text x="${w/2}" y="${h * 0.85}" fill="${textColor}" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle">${frameText}</text>
-  <image x="0" y="0" width="${w}" height="${h}" xlink:href="${pngData}"/>
-</svg>`;
-                }
                 
                 const blob = new Blob([svgContent], {type: 'image/svg+xml'});
                 const link = document.createElement('a');
@@ -691,26 +546,6 @@
                 link.click();
                 setTimeout(() => URL.revokeObjectURL(link.href), 1000);
             }
-        }
-        
-        // Get SVG frame path
-        function getSVGFramePath(style, w, h) {
-            if (style === 'rounded') {
-                const r = 20;
-                return `M ${r},0 L ${w-r},0 Q ${w},0 ${w},${r} L ${w},${h-r} Q ${w},${h} ${w-r},${h} L ${r},${h} Q 0,${h} 0,${h-r} L 0,${r} Q 0,0 ${r},0 Z`;
-            } else if (style === 'circle') {
-                const cx = w/2, cy = h/2, r = Math.min(w,h)/2 - 2;
-                return `M ${cx+r},${cy} A ${r} ${r} 0 1 1 ${cx-r},${cy} A ${r} ${r} 0 1 1 ${cx+r},${cy}`;
-            } else if (style === 'leaf') {
-                const cx = w/2, cy = h/2, rx = w/2 - 2, ry = h/2 - 2;
-                return `M ${cx},${cy-ry} A ${rx} ${ry} 0 1 0 ${cx},${cy+ry} A ${rx} ${ry} 0 1 0 ${cx},${cy-ry}`;
-            } else if (style === 'bubble') {
-                const ts = 25;
-                return `M 20,0 L ${w-20},0 Q ${w},0 ${w},20 L ${w},${h-ts-20} Q ${w},${h-ts} ${w-20},${h-ts} L ${w/2+10},${h-ts} L ${w/2},${h} L ${w/2-10},${h-ts} L 20,${h-ts} Q 0,${h-ts} 0,${h-ts-20} L 0,20 Q 0,0 20,0 Z`;
-            } else if (style === 'badge') {
-                return `M ${w/2},0 L ${w-8},8 L ${w-4},${h/2} L ${w/2},${h-4} L 4,${h/2} L 8,8 Z`;
-            }
-            return '';
         }
 
         // Initialize
