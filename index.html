@@ -241,6 +241,24 @@
                                 <button onclick="setQRShape('round')" id="shape-dot" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition">Round</button>
                             </div>
                         </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Frame Options</label>
+                            <div class="flex gap-2">
+                                <button onclick="setQRFrame('none')" id="frame-none" class="flex-1 px-4 py-2 border-2 border-orange-400 rounded-lg bg-orange-50 font-medium text-orange-700 transition">None</button>
+                                <button onclick="setQRFrame('bottom')" id="frame-bottom" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition">Text Bottom</button>
+                                <button onclick="setQRFrame('top')" id="frame-top" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition">Text Top</button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-4" id="frame-customization" style="display: none;">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Frame Text</label>
+                                <input type="text" id="frame-text" value="SCAN ME" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition bg-white" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Frame Color</label>
+                                <input type="color" id="frame-color" value="#f59e0b" class="w-full h-[42px] border border-gray-300 rounded-lg cursor-pointer" oninput="generateQR()">
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -265,6 +283,7 @@
                     <div class="qr-canvas" id="qr-container">
                         <p class="text-gray-400 text-center">Enter content above to generate QR code</p>
                     </div>
+                    <div id="qr-container-hidden" style="display: none;"></div>
                     <div class="mt-4 flex gap-2">
                         <button onclick="downloadQR('png')" class="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Download PNG</button>
                         <button onclick="downloadQR('svg')" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-400 hover:from-yellow-600 hover:to-orange-500 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Download SVG</button>
@@ -387,6 +406,39 @@
         let qrObject = null;
         let uploadedLogo = null;
         let currentQRShape = 'square';
+        let currentQRFrame = 'none';
+
+        // Polyfill for roundRect if not supported
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (w < 2 * r) r = w / 2;
+                if (h < 2 * r) r = h / 2;
+                this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r);
+                this.arcTo(x, y, x + w, y, r);
+                return this;
+            };
+        }
+
+        // Set QR frame
+        function setQRFrame(frame) {
+            currentQRFrame = frame;
+            const btnNone = document.getElementById('frame-none');
+            const btnBottom = document.getElementById('frame-bottom');
+            const btnTop = document.getElementById('frame-top');
+            
+            [btnNone, btnBottom, btnTop].forEach(btn => {
+                btn.className = 'flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition';
+            });
+            
+            document.getElementById(`frame-${frame}`).className = 'flex-1 px-4 py-2 border-2 border-orange-400 rounded-lg bg-orange-50 font-medium text-orange-700 transition';
+            
+            document.getElementById('frame-customization').style.display = frame === 'none' ? 'none' : 'grid';
+            
+            generateQR();
+        }
 
         // Set QR shape (square or round)
         function setQRShape(shape) {
@@ -453,19 +505,22 @@
         // Generate QR code
         function generateQR() {
             const data = getQRData();
-            const container = document.getElementById('qr-container');
+            const visibleContainer = document.getElementById('qr-container');
+            const hiddenContainer = document.getElementById('qr-container-hidden');
             const fgColor = document.getElementById('color-fg').value;
             const bgColor = document.getElementById('color-bg').value;
             
-            // Clear container
-            container.innerHTML = '';
+            // Clear containers
+            hiddenContainer.innerHTML = '';
             
             if (!data) {
-                container.innerHTML = '<p class="text-gray-400 text-center">Enter content above to generate QR code</p>';
+                visibleContainer.innerHTML = '<p class="text-gray-400 text-center">Enter content above to generate QR code</p>';
                 return;
+            } else {
+                visibleContainer.innerHTML = '';
             }
             
-            // Generate QR code
+            // Generate base QR code
             const options = {
                 text: data,
                 width: 200,
@@ -484,19 +539,59 @@
                 dotStyle: currentQRShape === 'round' ? 'circle' : 'square'
             };
             
-            qrObject = new QRCode(container, options);
+            qrObject = new QRCode(hiddenContainer, options);
             
-            // Apply shape styling after QR is generated
+            // Apply shape and frame styling after QR is generated
             setTimeout(() => {
-                const canvas = container.querySelector('canvas');
-                if (canvas) {
-                    canvas.style.borderRadius = '0';
+                const baseCanvas = hiddenContainer.querySelector('canvas');
+                if (!baseCanvas) return;
+                
+                let finalCanvas = baseCanvas;
+                
+                if (currentQRFrame !== 'none') {
+                    const frameText = document.getElementById('frame-text').value;
+                    const frameColor = document.getElementById('frame-color').value;
+                    
+                    const padding = 20;
+                    const textHeight = 50;
+                    
+                    const w = baseCanvas.width + (padding * 2);
+                    const h = baseCanvas.height + padding + textHeight;
+                    
+                    finalCanvas = document.createElement('canvas');
+                    finalCanvas.width = w;
+                    finalCanvas.height = h;
+                    const ctx = finalCanvas.getContext('2d');
+                    
+                    // Draw Frame Background with rounded corners
+                    ctx.fillStyle = frameColor;
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, w, h, 16);
+                    ctx.fill();
+                    
+                    // Draw Text
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 24px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    let textY = currentQRFrame === 'top' ? (textHeight / 2) + 5 : h - (textHeight / 2);
+                    ctx.fillText(frameText, w / 2, textY);
+                    
+                    // Draw Base QR Code
+                    let qrY = currentQRFrame === 'top' ? textHeight : padding;
+                    ctx.drawImage(baseCanvas, padding, qrY);
                 }
-                if (currentQRShape === 'round') {
-                    container.className = 'qr-canvas round-style';
+                
+                if (currentQRShape === 'round' && currentQRFrame === 'none') {
+                    finalCanvas.style.borderRadius = '50%';
+                    visibleContainer.className = 'qr-canvas round-style';
                 } else {
-                    container.className = 'qr-canvas';
+                    finalCanvas.style.borderRadius = '16px';
+                    visibleContainer.className = 'qr-canvas';
                 }
+                
+                visibleContainer.appendChild(finalCanvas);
             }, 50);
         }
 
