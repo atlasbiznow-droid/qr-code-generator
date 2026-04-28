@@ -619,27 +619,13 @@
                 return;
             }
             
-            if (format === 'png') {
+            if (format === 'png' || format === 'svg') {
+                // Both PNG and SVG downloads use the canvas image
+                // EasyQRCodeJS outputs raster, so we just save as PNG
                 const link = document.createElement('a');
-                link.download = 'qrcode.png';
+                link.download = 'qrcode.' + format;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-            } else if (format === 'svg') {
-                const w = canvas.width;
-                const h = canvas.height;
-                const pngData = canvas.toDataURL('image/png');
-                
-                const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-  <image width="${w}" height="${h}" xlink:href="${pngData}"/>
-</svg>`;
-                
-                const blob = new Blob([svgContent], {type: 'image/svg+xml'});
-                const link = document.createElement('a');
-                link.download = 'qrcode.svg';
-                link.href = URL.createObjectURL(blob);
-                link.click();
-                setTimeout(() => URL.revokeObjectURL(link.href), 1000);
             }
         }
 
