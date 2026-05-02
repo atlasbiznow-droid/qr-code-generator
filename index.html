@@ -532,8 +532,7 @@
                 logoBackgroundColor: bgColor,
                 logoMargin: 2,
                 logoBorder: false,
-                logoBorderColor: bgColor,
-                dotStyle: currentQRShape === 'round' ? 'circle' : 'square'
+                logoBorderColor: bgColor
             };
             
             qrObject = new QRCode(hiddenContainer, options);
@@ -544,6 +543,21 @@
                 if (!baseCanvas) return;
                 
                 let finalCanvas = baseCanvas;
+                
+                // Apply shape - Square has square corners, Round clips to circle
+                if (currentQRShape === 'round' && currentQRFrame === 'none') {
+                    // Create a circular clipped version
+                    const clipCanvas = document.createElement('canvas');
+                    clipCanvas.width = baseCanvas.width;
+                    clipCanvas.height = baseCanvas.height;
+                    const ctx = clipCanvas.getContext('2d');
+                    ctx.beginPath();
+                    ctx.arc(baseCanvas.width/2, baseCanvas.height/2, baseCanvas.width/2, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(baseCanvas, 0, 0);
+                    finalCanvas = clipCanvas;
+                }
                 
                 if (currentQRFrame !== 'none') {
                     const frameText = document.getElementById('frame-text').value;
@@ -580,11 +594,10 @@
                     ctx.drawImage(baseCanvas, padding, qrY);
                 }
                 
+                // Set container styling for preview
                 if (currentQRShape === 'round' && currentQRFrame === 'none') {
-                    finalCanvas.style.borderRadius = '50%';
                     visibleContainer.className = 'qr-canvas round-style';
                 } else {
-                    finalCanvas.style.borderRadius = '16px';
                     visibleContainer.className = 'qr-canvas';
                 }
                 
