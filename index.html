@@ -142,6 +142,10 @@
                     <div class="flex flex-wrap gap-1">
                         <button onclick="setQRType('url')" id="tab-url" class="tab-active flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">URL</button>
                         <button onclick="setQRType('wifi')" id="tab-wifi" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">WiFi</button>
+                        <button onclick="setQRType('email')" id="tab-email" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">E-mail</button>
+                        <button onclick="setQRType('sms')" id="tab-sms" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">SMS</button>
+                        <button onclick="setQRType('whatsapp')" id="tab-whatsapp" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">WhatsApp</button>
+                        <button onclick="setQRType('call')" id="tab-call" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">Call</button>
                         <button onclick="setQRType('text')" id="tab-text" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">Text</button>
                         <button onclick="setQRType('vcard')" id="tab-vcard" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">VCard</button>
                     </div>
@@ -175,6 +179,60 @@
                                     <option value="nopass">None</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- E-mail Input -->
+                    <div id="input-email" class="input-section hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email" id="email-address" placeholder="john@example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Subject (Optional)</label>
+                                <input type="text" id="email-subject" placeholder="Email subject" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Body (Optional)</label>
+                                <textarea id="email-body" rows="3" placeholder="Email message body" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" oninput="generateQR()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SMS Input -->
+                    <div id="input-sms" class="input-section hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" id="sms-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Message (Optional)</label>
+                                <textarea id="sms-message" rows="3" placeholder="SMS message" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition" oninput="generateQR()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Input -->
+                    <div id="input-whatsapp" class="input-section hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" id="whatsapp-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Pre-filled Message (Optional)</label>
+                                <textarea id="whatsapp-message" rows="3" placeholder="Message to pre-fill" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 transition" oninput="generateQR()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Call Input -->
+                    <div id="input-call" class="input-section hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                            <input type="tel" id="call-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
                         </div>
                     </div>
 
@@ -363,8 +421,8 @@
                 <div>
                     <h4 class="text-white font-semibold mb-3">Quick Links</h4>
                     <ul class="text-sm space-y-2">
-                        <li><a href="#" class="hover:text-yellow-400 transition">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-yellow-400 transition">Terms of Service</a></li>
+                        <li><a href="privacy.html" class="hover:text-yellow-400 transition">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="hover:text-yellow-400 transition">Terms of Service</a></li>
                         <li><a href="https://www.atlasbiznow.com" class="hover:text-yellow-400 transition">AtlasBizNow</a></li>
                     </ul>
                 </div>
@@ -389,7 +447,11 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1671032738156637"
      crossorigin="anonymous"></script>
     <script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
+        window.addEventListener('load', function() {
+            if (typeof adsbygoogle !== 'undefined') {
+                adsbygoogle.push({});
+            }
+        });
     </script>
 
     <!-- Application Scripts -->
@@ -482,6 +544,30 @@
                     return `WIFI:T:${encryption};S:${ssid};P:${password};;`;
                 case 'text':
                     return document.getElementById('text-input').value || '';
+                case 'email':
+                    const emailAddr = document.getElementById('email-address').value;
+                    const emailSubj = document.getElementById('email-subject').value;
+                    const emailBody = document.getElementById('email-body').value;
+                    let emailUrl = `mailto:${emailAddr}`;
+                    const params = [];
+                    if (emailSubj) params.push(`subject=${encodeURIComponent(emailSubj)}`);
+                    if (emailBody) params.push(`body=${encodeURIComponent(emailBody)}`);
+                    if (params.length > 0) emailUrl += '?' + params.join('&');
+                    return emailUrl;
+                case 'sms':
+                    const smsPhone = document.getElementById('sms-phone').value;
+                    const smsMsg = document.getElementById('sms-message').value;
+                    let smsUrl = `sms:${smsPhone}`;
+                    if (smsMsg) smsUrl += `?body=${encodeURIComponent(smsMsg)}`;
+                    return smsUrl;
+                case 'whatsapp':
+                    const waPhone = document.getElementById('whatsapp-phone').value.replace(/\D/g, '');
+                    const waMsg = document.getElementById('whatsapp-message').value;
+                    let waUrl = `https://wa.me/${waPhone}`;
+                    if (waMsg) waUrl += `?text=${encodeURIComponent(waMsg)}`;
+                    return waUrl;
+                case 'call':
+                    return `tel:${document.getElementById('call-phone').value}`;
                 case 'vcard':
                     const firstname = document.getElementById('vcard-firstname').value;
                     const lastname = document.getElementById('vcard-lastname').value;

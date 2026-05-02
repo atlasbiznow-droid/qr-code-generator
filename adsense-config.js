@@ -37,7 +37,7 @@ const AdSenseConfig = {
     enabled: true,
     
     // Test mode - shows test ads (set to true initially)
-    testMode: true
+    testMode: false
 };
 
 // Auto-ad.js script loader
@@ -53,4 +53,4 @@ const AdSenseConfig = {
     document.head.appendChild(script);
 })();
 
-console.log('AdSense config loaded. Update adsense-config.js with your publisher ID.');
+// AdSense config loaded
