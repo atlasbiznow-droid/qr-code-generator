@@ -738,6 +738,22 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            // Check URL parameters for pre-filled values
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.has('url')) {
+                document.getElementById('url-input').value = urlParams.get('url');
+            } else if (urlParams.has('text')) {
+                document.getElementById('text-input').value = urlParams.get('text');
+            } else if (urlParams.has('wifi')) {
+                const wifiData = urlParams.get('wifi').split('|');
+                if (wifiData.length >= 2) {
+                    document.getElementById('wifi-ssid').value = wifiData[0];
+                    document.getElementById('wifi-password').value = wifiData[1];
+                    if (wifiData[2]) document.getElementById('wifi-encryption').value = wifiData[2];
+                }
+            }
+            
             setQRType('url');
         });
     </script>
