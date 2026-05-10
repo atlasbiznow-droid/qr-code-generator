@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary SEO -->
+    <title>ABN Free QR Code Generator | Custom QR Codes with Logo - No Sign-Up</title>
+    <meta name="description" content="Generate custom QR codes for URLs, WiFi, text, and VCards. Free permanent QR code generator with custom colors and logo support. No sign-up required. Create and download in PNG or SVG format.">
+    <meta name="keywords" content="Free QR Code Generator, Custom QR code with logo, Permanent QR code generator, No sign-up QR code maker, How to make a QR code">
+    <meta name="author" content="AtlasBizNow">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="ABN Free QR Code Generator | Custom QR Codes with Logo">
+    <meta property="og:description" content="Generate custom QR codes for URLs, WiFi, text, and VCards. Free permanent QR code generator with custom colors and logo support.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qr.atlasbiznow.com/">
+    <meta property="og:image" content="https://qr.atlasbiznow.com/og-image.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ABN Free QR Code Generator">
+    <meta name="twitter:description" content="Generate custom QR codes for URLs, WiFi, text, and VCards. Free permanent QR code generator.">
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="https://qr.atlasbiznow.com/">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Easy QRCode Library -->
+    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs/dist/easy.qrcode.min.js"></script>
+    
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1671032738156637"
+     crossorigin="anonymous"></script>
+    
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "ABN Free QR Code Generator",
+        "description": "Generate custom QR codes for URLs, WiFi, text, and VCards. Free permanent QR code generator with custom colors and logo support.",
+        "url": "https://qr.atlasbiznow.com/",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "AtlasBizNow",
+            "url": "https://atlasbiznow.com"
+        }
+    }
+    </script>
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+        }
+        .qr-canvas {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 220px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .qr-canvas canvas, .qr-canvas img {
+            border-radius: 0 !important;
+        }
+        .qr-canvas.round-style {
+            border-radius: 50%;
+        }
+        
+        .qr-preview-section {
+            border: 3px solid #f59e0b;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+        .qr-preview-section h2 {
+            color: #b45309;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+        }
+        .tab-active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    
+    <!-- Top Leaderboard Ad -->
+    <div class="mx-4 mt-4 md:mx-8 md:mt-8">
+        <ins class="adsbygoogle"
+             style="display:block; width: 100%; height: 100px;"
+             data-ad-client="ca-pub-1671032738156637"
+             data-ad-slot="2143184897"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-orange-500 to-amber-500 shadow-sm border-b" style="border-bottom: 4px solid #f59e0b;">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <h1 class="text-2xl md:text-3xl font-bold text-white">ABN Free QR Code Generator</h1>
+            <p class="text-sm text-orange-100">Permanent custom QR codes • No sign-up required</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column - Input Form -->
+            <div class="lg:col-span-2">
+                
+                <!-- QR Type Tabs -->
+                <div class="bg-white rounded-xl shadow-sm border p-1 mb-6">
+                    <div class="flex flex-wrap gap-1">
+                        <button onclick="setQRType('url')" id="tab-url" class="tab-active flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">URL</button>
+                        <button onclick="setQRType('wifi')" id="tab-wifi" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">WiFi</button>
+                        <button onclick="setQRType('email')" id="tab-email" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">E-mail</button>
+                        <button onclick="setQRType('sms')" id="tab-sms" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">SMS</button>
+                        <button onclick="setQRType('whatsapp')" id="tab-whatsapp" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">WhatsApp</button>
+                        <button onclick="setQRType('call')" id="tab-call" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">Call</button>
+                        <button onclick="setQRType('text')" id="tab-text" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">Text</button>
+                        <button onclick="setQRType('vcard')" id="tab-vcard" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">VCard</button>
+                    </div>
+                </div>
+
+                <!-- Input Form -->
+                <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+                    
+                    <!-- URL Input -->
+                    <div id="input-url" class="input-section border-2 border-amber-300 rounded-lg p-4 bg-amber-50">
+                        <label class="block text-sm font-semibold text-orange-600 mb-2">Enter URL</label>
+                        <input type="url" id="url-input" placeholder="https://atlasbiznow.com" class="w-full px-4 py-3 border-2 border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition bg-white" oninput="generateQR()">
+                    </div>
+
+                    <!-- WiFi Input -->
+                    <div id="input-wifi" class="input-section hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Network Name (SSID)</label>
+                                <input type="text" id="wifi-ssid" placeholder="MyWiFi-Network" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                <input type="text" id="wifi-password" placeholder="YourWiFiPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Encryption</label>
+                                <select id="wifi-encryption" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" onchange="generateQR()">
+                                    <option value="WPA">WPA/WPA2</option>
+                                    <option value="WEP">WEP</option>
+                                    <option value="nopass">None</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- E-mail Input -->
+                    <div id="input-email" class="input-section hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email" id="email-address" placeholder="john@example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Subject (Optional)</label>
+                                <input type="text" id="email-subject" placeholder="Email subject" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Body (Optional)</label>
+                                <textarea id="email-body" rows="3" placeholder="Email message body" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" oninput="generateQR()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SMS Input -->
+                    <div id="input-sms" class="input-section hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" id="sms-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Message (Optional)</label>
+                                <textarea id="sms-message" rows="3" placeholder="SMS message" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition" oninput="generateQR()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Input -->
+                    <div id="input-whatsapp" class="input-section hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" id="whatsapp-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Pre-filled Message (Optional)</label>
+                                <textarea id="whatsapp-message" rows="3" placeholder="Message to pre-fill" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 transition" oninput="generateQR()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Call Input -->
+                    <div id="input-call" class="input-section hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                            <input type="tel" id="call-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                        </div>
+                    </div>
+
+                    <!-- Text Input -->
+                    <div id="input-text" class="input-section hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Enter Text</label>
+                        <textarea id="text-input" rows="4" placeholder="Enter any text content..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()"></textarea>
+                    </div>
+
+                    <!-- VCard Input -->
+                    <div id="input-vcard" class="input-section hidden">
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                    <input type="text" id="vcard-firstname" placeholder="John" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                    <input type="text" id="vcard-lastname" placeholder="Doe" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                                <input type="tel" id="vcard-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="vcard-email" placeholder="john@example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Company</label>
+                                <input type="text" id="vcard-company" placeholder="AtlasBizNow LLC" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                                <input type="url" id="vcard-website" placeholder="https://atlasbiznow.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customization Options -->
+                    <div class="mt-6 pt-6 border-t">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Customize QR Code</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Foreground Color</label>
+                                <input type="color" id="color-fg" value="#000000" class="w-full h-12 border border-gray-300 rounded-lg cursor-pointer" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
+                                <input type="color" id="color-bg" value="#ffffff" class="w-full h-12 border border-gray-300 rounded-lg cursor-pointer" oninput="generateQR()">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-semibold text-orange-600 mb-2">Logo/Image (Optional)</label>
+                            <input type="file" id="logo-input" accept="image/*" class="w-full px-4 py-3 border-2 border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition bg-white" onchange="handleLogoUpload()">
+                            <p class="text-xs text-amber-600 mt-1 font-medium">Upload a logo to embed in the center of the QR code</p>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-semibold text-orange-600 mb-2">Design your QR Code</label>
+                            <div class="flex gap-2">
+                                <button onclick="setQRFrame('none')" id="frame-none" class="flex-1 px-4 py-2 border-2 border-orange-400 rounded-lg bg-orange-50 font-medium text-orange-700 transition">None</button>
+                                <button onclick="setQRFrame('bottom')" id="frame-bottom" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition">Text Bottom</button>
+                                <button onclick="setQRFrame('top')" id="frame-top" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition">Text Top</button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-4" id="frame-customization" style="display: none;">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Frame Text</label>
+                                <input type="text" id="frame-text" value="SCAN ME" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition bg-white" oninput="generateQR()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Frame Color</label>
+                                <input type="color" id="frame-color" value="#f59e0b" class="w-full h-[42px] border border-gray-300 rounded-lg cursor-pointer" oninput="generateQR()">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Column - QR Preview & Sidebar Ad -->
+            <div class="lg:col-span-1">
+                
+                <!-- Sidebar Ad -->
+                <div class="mb-6" style="min-height: 280px;">
+                    <ins class="adsbygoogle"
+                         style="display:block; width: 100%; height: 280px;"
+                         data-ad-client="ca-pub-1671032738156637"
+                         data-ad-slot="6733391932"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                </div>
+
+                <!-- QR Preview -->
+                <div class="qr-preview-section bg-white rounded-xl shadow-sm border p-6">
+                    <h2 class="text-lg font-bold text-orange-800 mb-4 text-center">Your QR Code</h2>
+                    <div class="qr-canvas" id="qr-container">
+                        <p class="text-gray-400 text-center">Enter content above to generate QR code</p>
+                    </div>
+                    <div id="qr-container-hidden" style="display: none;"></div>
+                    <div class="mt-4 flex gap-2">
+                        <button onclick="downloadQR('png')" class="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Download PNG</button>
+                        <button onclick="downloadQR('svg')" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-400 hover:from-yellow-600 hover:to-orange-500 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Download SVG</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- In-Content Ad -->
+        <div class="my-8" style="min-height: 250px;">
+            <ins class="adsbygoogle"
+                 style="display:block; text-align:center; width: 100%; height: 250px;"
+                 data-ad-layout="in-article"
+                 data-ad-format="fluid"
+                 data-ad-client="ca-pub-1671032738156637"
+                 data-ad-slot="2937391812"></ins>
+        </div>
+
+        <!-- How to Use Section -->
+        <section class="mt-12 bg-white rounded-xl shadow-sm border p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">How to Make a QR Code</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Step 1: Choose QR Type</h3>
+                    <p class="text-gray-600">Select the type of QR code you need: URL for websites, WiFi for network credentials, Text for plain text, or VCard for contact information.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Step 2: Enter Content</h3>
+                    <p class="text-gray-600">Fill in the required information for your chosen QR type. For URLs, simply paste your website address.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Step 3: Customize (Optional)</h3>
+                    <p class="text-gray-600">Change the foreground and background colors to match your brand. You can also upload a logo to embed in the center.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Step 4: Download</h3>
+                    <p class="text-gray-600">Click the download button to save your QR code as PNG or SVG. The QR code is permanent and will never expire.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="mt-8 bg-white rounded-xl shadow-sm border p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Are QR codes free to generate?</h3>
+                    <p class="text-gray-600">Yes! Our QR code generator is completely free. No sign-up required, no hidden fees. Generate as many QR codes as you need.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Do QR codes expire?</h3>
+                    <p class="text-gray-600">No, QR codes generated here are permanent. They will work forever as long as the content (URL, WiFi, text) remains valid.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Can I customize QR codes with my logo?</h3>
+                    <p class="text-gray-600">Yes! You can upload your logo or brand image to embed in the center of the QR code. Make sure your logo is square for best results.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">What file formats can I download?</h3>
+                    <p class="text-gray-600">You can download your QR code as PNG (raster image) or SVG (vector graphics). SVG is best for printing and scaling.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">How do I scan a QR code?</h3>
+                    <p class="text-gray-600">Most smartphones can scan QR codes directly using the camera app. iPhone users can use the Camera app, and Android users can use Google Lens.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Can I embed this QR code on my website?</h3>
+                    <p class="text-gray-600">Yes! Download the PNG or SVG and embed it anywhere on your website. For Google Sites, use the Embed option and paste the image URL.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-gray-800 via-gray-800 to-orange-900 text-gray-300 mt-12" style="border-top: 4px solid #f59e0b;">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-white font-semibold mb-3">ABN Free QR Code Generator</h4>
+                    <p class="text-sm">Generate custom QR codes for free. No sign-up required. Permanent QR codes that never expire.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-3">Quick Links</h4>
+                    <ul class="text-sm space-y-2">
+                        <li><a href="privacy.html" class="hover:text-yellow-400 transition">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="hover:text-yellow-400 transition">Terms of Service</a></li>
+                        <li><a href="https://www.atlasbiznow.com" class="hover:text-yellow-400 transition">AtlasBizNow</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-3">Contact</h4>
+                    <p class="text-sm">Questions? Email us at contact@atlasbiznow.com</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2026 AtlasBizNow LLC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AdSense Initialization -->
+    <script>
+        // Initialize each ad unit individually
+        (function() {
+            const ads = document.querySelectorAll('.adsbygoogle');
+            ads.forEach(function(ad) {
+                try {
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                } catch(e) {
+                    console.log('AdSense init error:', e);
+                }
+            });
+        })();
+    </script>
+
+    <!-- Application Scripts -->
+    <script>
+        // Global state
+        let currentQRType = 'url';
+        let qrObject = null;
+        let uploadedLogo = null;
+        let currentQRShape = 'square';
+        let currentQRFrame = 'none';
+
+        // Polyfill for roundRect if not supported
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (w < 2 * r) r = w / 2;
+                if (h < 2 * r) r = h / 2;
+                this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r);
+                this.arcTo(x, y, x + w, y, r);
+                return this;
+            };
+        }
+
+        // Set QR frame
+        function setQRFrame(frame) {
+            currentQRFrame = frame;
+            const btnNone = document.getElementById('frame-none');
+            const btnBottom = document.getElementById('frame-bottom');
+            const btnTop = document.getElementById('frame-top');
+            
+            [btnNone, btnBottom, btnTop].forEach(btn => {
+                btn.className = 'flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition';
+            });
+            
+            document.getElementById(`frame-${frame}`).className = 'flex-1 px-4 py-2 border-2 border-orange-400 rounded-lg bg-orange-50 font-medium text-orange-700 transition';
+            
+            document.getElementById('frame-customization').style.display = frame === 'none' ? 'none' : 'grid';
+            
+            generateQR();
+        }
+
+        // Set QR type
+        function setQRType(type) {
+            currentQRType = type;
+            
+            document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('text-gray-600');
+            });
+            document.getElementById(`tab-${type}`).classList.add('tab-active');
+            document.getElementById(`tab-${type}`).classList.remove('text-gray-600');
+            
+            document.querySelectorAll('.input-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(`input-${type}`).classList.remove('hidden');
+            
+            generateQR();
+        }
+
+        // Get QR data based on type
+        function getQRData() {
+            switch(currentQRType) {
+                case 'url':
+                    return document.getElementById('url-input').value || '';
+                case 'wifi':
+                    const ssid = document.getElementById('wifi-ssid').value;
+                    const password = document.getElementById('wifi-password').value;
+                    const encryption = document.getElementById('wifi-encryption').value;
+                    return `WIFI:T:${encryption};S:${ssid};P:${password};;`;
+                case 'text':
+                    return document.getElementById('text-input').value || '';
+                case 'email':
+                    const emailAddr = document.getElementById('email-address').value;
+                    const emailSubj = document.getElementById('email-subject').value;
+                    const emailBody = document.getElementById('email-body').value;
+                    let emailUrl = `mailto:${emailAddr}`;
+                    const params = [];
+                    if (emailSubj) params.push(`subject=${encodeURIComponent(emailSubj)}`);
+                    if (emailBody) params.push(`body=${encodeURIComponent(emailBody)}`);
+                    if (params.length > 0) emailUrl += '?' + params.join('&');
+                    return emailUrl;
+                case 'sms':
+                    const smsPhone = document.getElementById('sms-phone').value;
+                    const smsMsg = document.getElementById('sms-message').value;
+                    let smsUrl = `sms:${smsPhone}`;
+                    if (smsMsg) smsUrl += `?body=${encodeURIComponent(smsMsg)}`;
+                    return smsUrl;
+                case 'whatsapp':
+                    const waPhone = document.getElementById('whatsapp-phone').value.replace(/\D/g, '');
+                    const waMsg = document.getElementById('whatsapp-message').value;
+                    let waUrl = `https://wa.me/${waPhone}`;
+                    if (waMsg) waUrl += `?text=${encodeURIComponent(waMsg)}`;
+                    return waUrl;
+                case 'call':
+                    return `tel:${document.getElementById('call-phone').value}`;
+                case 'vcard':
+                    const firstname = document.getElementById('vcard-firstname').value;
+                    const lastname = document.getElementById('vcard-lastname').value;
+                    const phone = document.getElementById('vcard-phone').value;
+                    const email = document.getElementById('vcard-email').value;
+                    const company = document.getElementById('vcard-company').value;
+                    const website = document.getElementById('vcard-website').value;
+                    return `BEGIN:VCARD\nVERSION:3.0\nN:${lastname};${firstname}\nFN:${firstname} ${lastname}\nTEL:${phone}\nEMAIL:${email}\nORG:${company}\nURL:${website}\nEND:VCARD`;
+                default:
+                    return '';
+            }
+        }
+
+        // Generate QR code
+        function generateQR() {
+            const data = getQRData();
+            const visibleContainer = document.getElementById('qr-container');
+            const hiddenContainer = document.getElementById('qr-container-hidden');
+            const fgColor = document.getElementById('color-fg').value;
+            const bgColor = document.getElementById('color-bg').value;
+            
+            hiddenContainer.innerHTML = '';
+            
+            if (!data) {
+                visibleContainer.innerHTML = '<p class="text-gray-400 text-center">Enter content above to generate QR code</p>';
+                return;
+            } else {
+                visibleContainer.innerHTML = '';
+            }
+            
+            const options = {
+                text: data,
+                width: 200,
+                height: 200,
+                colorDark: fgColor,
+                colorLight: bgColor,
+                correctLevel: QRCode.CorrectLevel.M,
+                quietZone: 2,
+                logo: uploadedLogo || '',
+                logoWidth: 40,
+                logoHeight: 40,
+                logoBackgroundColor: bgColor,
+                logoMargin: 2,
+                logoBorder: false,
+                logoBorderColor: bgColor
+            };
+            
+            qrObject = new QRCode(hiddenContainer, options);
+            
+            setTimeout(() => {
+                const baseCanvas = hiddenContainer.querySelector('canvas');
+                if (!baseCanvas) return;
+                
+                let finalCanvas = baseCanvas;
+                
+                if (currentQRShape === 'round' && currentQRFrame === 'none') {
+                    const clipCanvas = document.createElement('canvas');
+                    clipCanvas.width = baseCanvas.width;
+                    clipCanvas.height = baseCanvas.height;
+                    const ctx = clipCanvas.getContext('2d');
+                    ctx.beginPath();
+                    ctx.arc(baseCanvas.width/2, baseCanvas.height/2, baseCanvas.width/2, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(baseCanvas, 0, 0);
+                    finalCanvas = clipCanvas;
+                }
+                
+                if (currentQRFrame !== 'none') {
+                    const frameText = document.getElementById('frame-text').value;
+                    const frameColor = document.getElementById('frame-color').value;
+                    
+                    const padding = 20;
+                    const textHeight = 50;
+                    
+                    const w = baseCanvas.width + (padding * 2);
+                    const h = baseCanvas.height + padding + textHeight;
+                    
+                    finalCanvas = document.createElement('canvas');
+                    finalCanvas.width = w;
+                    finalCanvas.height = h;
+                    const ctx = finalCanvas.getContext('2d');
+                    
+                    ctx.fillStyle = frameColor;
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, w, h, 16);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 24px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    let textY = currentQRFrame === 'top' ? (textHeight / 2) + 5 : h - (textHeight / 2);
+                    ctx.fillText(frameText, w / 2, textY);
+                    
+                    let qrY = currentQRFrame === 'top' ? textHeight : padding;
+                    ctx.drawImage(baseCanvas, padding, qrY);
+                }
+                
+                if (currentQRShape === 'round' && currentQRFrame === 'none') {
+                    visibleContainer.className = 'qr-canvas round-style';
+                } else {
+                    visibleContainer.className = 'qr-canvas';
+                }
+                
+                visibleContainer.appendChild(finalCanvas);
+            }, 50);
+        }
+
+        // Handle logo upload
+        function handleLogoUpload() {
+            const fileInput = document.getElementById('logo-input');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedLogo = e.target.result;
+                    generateQR();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Download QR code
+        function downloadQR(format) {
+            const canvas = document.querySelector('#qr-container canvas');
+            
+            if (!canvas) {
+                alert('Please generate a QR code first');
+                return;
+            }
+            
+            if (format === 'png') {
+                const link = document.createElement('a');
+                link.download = 'qrcode.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } else if (format === 'svg') {
+                const w = canvas.width;
+                const h = canvas.height;
+                const pngData = canvas.toDataURL('image/png');
+                
+                const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <image width="${w}" height="${h}" href="${pngData}"/>
+</svg>`;
+                
+                const blob = new Blob([svgContent], {type: 'image/svg+xml'});
+                const link = document.createElement('a');
+                link.download = 'qrcode.svg';
+                link.href = URL.createObjectURL(blob);
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.has('url')) {
+                document.getElementById('url-input').value = urlParams.get('url');
+            } else if (urlParams.has('text')) {
+                document.getElementById('text-input').value = urlParams.get('text');
+            } else if (urlParams.has('wifi')) {
+                const wifiData = urlParams.get('wifi').split('|');
+                if (wifiData.length >= 2) {
+                    document.getElementById('wifi-ssid').value = wifiData[0];
+                    document.getElementById('wifi-password').value = wifiData[1];
+                    if (wifiData[2]) document.getElementById('wifi-encryption').value = wifiData[2];
+                }
+            }
+            
+            setQRType('url');
+        });
+    </script>
+</body>
+</html>
