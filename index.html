@@ -324,6 +324,7 @@
                         <button onclick="requestDownload('png')" class="flex-1 bg-brand hover:bg-branddark text-white font-bold py-3 px-4 rounded-lg transition shadow-sm">Download PNG</button>
                         <button onclick="requestDownload('svg')" class="flex-1 bg-ink hover:bg-gray-800 text-white font-bold py-3 px-4 rounded-lg transition shadow-sm">Download SVG</button>
                     </div>
+                    <p id="already-subscribed" class="hidden mt-3 text-center text-xs text-gray-500">✓ On the list — download anytime.</p>
 
                     <!-- Powered by ABN cross-sell card (shown after QR generation) -->
                     <div id="upsell-card" class="hidden mt-5 pt-5 border-t border-gray-100">
@@ -465,7 +466,7 @@
         let qrGenerated = false;
 
         const EMAIL_ENDPOINT = 'https://atlasbiznow.com/wp-json/atlasbiznow/v1/subscribe';
-        const GATE_DONE_KEY = 'abn_qr_lead_done';
+        const GATE_DONE_KEY = 'abn_qr_lead';  // stores JSON {name, email} once captured
 
         // Polyfill for roundRect if not supported
         if (!CanvasRenderingContext2D.prototype.roundRect) {
@@ -683,7 +684,8 @@
             }
         }
 
-        // Request download — intercept with email gate (always show)
+        // Request download — intercept with email gate. Returning visitors who
+        // already gave name+email skip the gate (no redundant re-asking).
         function requestDownload(format) {
             const canvas = document.querySelector('#qr-container canvas');
             
@@ -693,6 +695,15 @@
             }
             
             pendingFormat = format;
+            
+            try {
+                const saved = localStorage.getItem(GATE_DONE_KEY);
+                if (saved) {
+                    doDownload(format);
+                    return;
+                }
+            } catch (e) { /* localStorage may be blocked */ }
+            
             openGate();
         }
 
@@ -743,7 +754,9 @@
                 .then(r => r.json())
                 .then(res => {
                     // Success OR already subscribed (409 handled server-side as success)
-                    try { localStorage.setItem(GATE_DONE_KEY, '1'); } catch (err) {}
+                    // Store the lead so returning visitors skip the gate and we
+                    // know who we've already captured.
+                    try { localStorage.setItem(GATE_DONE_KEY, JSON.stringify({ name: name, email: email })); } catch (err) {}
                     document.getElementById('gate-success').classList.remove('hidden');
                     submitBtn.textContent = 'Done — downloading';
                     setTimeout(() => {
@@ -756,7 +769,7 @@
                 })
                 .catch(err => {
                     // Network error — still allow download, but log
-                    try { localStorage.setItem(GATE_DONE_KEY, '1'); } catch (e2) {}
+                    try { localStorage.setItem(GATE_DONE_KEY, JSON.stringify({ name: name, email: email })); } catch (e2) {}
                     document.getElementById('gate-success').classList.remove('hidden');
                     submitBtn.textContent = 'Done — downloading';
                     setTimeout(() => {
@@ -817,6 +830,21 @@
             }
             
             setQRType('url');
+
+            // If we already have this visitor's name+email, show the differentiator.
+            try {
+                const saved = localStorage.getItem(GATE_DONE_KEY);
+                if (saved) {
+                    const lead = JSON.parse(saved);
+                    const el = document.getElementById('already-subscribed');
+                    if (el) {
+                        el.textContent = lead.name
+                            ? '✓ On the list, ' + lead.name.split(' ')[0] + ' — download anytime.'
+                            : '✓ On the list — download anytime.';
+                        el.classList.remove('hidden');
+                    }
+                }
+            } catch (e) { /* ignore */ }
         });
     </script>
 </body>
