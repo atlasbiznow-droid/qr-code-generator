@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="google-adsense-account" content="ca-pub-1671032738156637">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Primary SEO -->
@@ -27,15 +26,32 @@
     <!-- Canonical -->
     <link rel="canonical" href="https://qr.atlasbiznow.com/">
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#f97316',
+                        branddark: '#ea580c',
+                        ink: '#111111',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- Easy QRCode Library -->
     <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs/dist/easy.qrcode.min.js"></script>
-    
-    <!-- AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1671032738156637"
-     crossorigin="anonymous"></script>
     
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
@@ -62,8 +78,15 @@
     
     <style>
         :root {
-            --primary: #2563eb;
-            --secondary: #1e40af;
+            --primary: #f97316;
+            --secondary: #ea580c;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
         }
         .qr-canvas {
             display: flex;
@@ -71,10 +94,11 @@
             align-items: center;
             min-height: 220px;
             background: #ffffff;
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #f3f4f6;
         }
         .qr-canvas canvas, .qr-canvas img {
             border-radius: 0 !important;
@@ -82,41 +106,22 @@
         .qr-canvas.round-style {
             border-radius: 50%;
         }
-        
-        .qr-preview-section {
-            border: 3px solid #f59e0b;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
-        }
-        .qr-preview-section h2 {
-            color: #b45309;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
-        }
-        .tab-active {
-            border-bottom: 3px solid var(--primary);
-            color: var(--primary);
-            font-weight: 600;
-        }
+        .input-section { transition: opacity .15s ease; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
-    
-    <!-- Top Leaderboard Ad -->
-    <div class="mx-4 mt-4 md:mx-8 md:mt-8">
-        <ins class="adsbygoogle"
-             style="display:block; width: 100%; height: 100px;"
-             data-ad-client="ca-pub-1671032738156637"
-             data-ad-slot="2143184897"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-    </div>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
 
     <!-- Header -->
-    <header class="bg-gradient-to-r from-orange-500 to-amber-500 shadow-sm border-b" style="border-bottom: 4px solid #f59e0b;">
-        <div class="max-w-6xl mx-auto px-4 py-4">
-            <h1 class="text-2xl md:text-3xl font-bold text-white">ABN Free QR Code Generator</h1>
-            <p class="text-sm text-orange-100">Permanent custom QR codes • No sign-up required</p>
+    <header class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col items-center text-center">
+            <a href="https://atlasbiznow.com" aria-label="AtlasBizNow - Home">
+                <img src="https://atlasbiznow.com/wp-content/uploads/2026/08/abn_logo_email.png" alt="AtlasBizNow.com" class="h-12 w-auto">
+            </a>
+            <p class="mt-2 text-xs text-gray-500">
+                <a href="https://atlasbiznow.com" class="text-gray-500 hover:text-brand transition-colors">ABN — Atlas Biz Now — Small Business Marketing Agency</a>
+            </p>
+            <h1 class="mt-3 text-xl md:text-2xl font-extrabold text-ink">Free QR Code Generator</h1>
+            <p class="text-sm text-gray-500 mt-1">Permanent custom QR codes · No sign-up · PNG &amp; SVG</p>
         </div>
     </header>
 
@@ -128,26 +133,26 @@
             <div class="lg:col-span-2">
                 
                 <!-- QR Type Tabs -->
-                <div class="bg-white rounded-xl shadow-sm border p-1 mb-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-1 mb-6">
                     <div class="flex flex-wrap gap-1">
-                        <button onclick="setQRType('url')" id="tab-url" class="tab-active flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">URL</button>
-                        <button onclick="setQRType('wifi')" id="tab-wifi" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">WiFi</button>
-                        <button onclick="setQRType('email')" id="tab-email" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">E-mail</button>
-                        <button onclick="setQRType('sms')" id="tab-sms" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">SMS</button>
-                        <button onclick="setQRType('whatsapp')" id="tab-whatsapp" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">WhatsApp</button>
-                        <button onclick="setQRType('call')" id="tab-call" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">Call</button>
-                        <button onclick="setQRType('text')" id="tab-text" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">Text</button>
-                        <button onclick="setQRType('vcard')" id="tab-vcard" class="flex-1 px-4 py-3 text-center rounded-lg hover:bg-gray-50 transition">VCard</button>
+                        <button onclick="setQRType('url')" id="tab-url" class="tab-active flex-1 px-3 py-2.5 text-center rounded-lg hover:bg-gray-50 transition text-sm md:text-base">URL</button>
+                        <button onclick="setQRType('wifi')" id="tab-wifi" class="flex-1 px-3 py-2.5 text-center rounded-lg hover:bg-gray-50 transition text-sm md:text-base text-gray-500">WiFi</button>
+                        <button onclick="setQRType('email')" id="tab-email" class="flex-1 px-3 py-2.5 text-center rounded-lg hover:bg-gray-50 transition text-sm md:text-base text-gray-500">E-mail</button>
+                        <button onclick="setQRType('sms')" id="tab-sms" class="flex-1 px-3 py-2.5 text-center rounded-lg hover:bg-gray-50 transition text-sm md:text-base text-gray-500">SMS</button>
+                        <button onclick="setQRType('whatsapp')" id="tab-whatsapp" class="flex-1 px-3 py-2.5 text-center rounded-lg hover:bg-gray-50 transition text-sm md:text-base text-gray-500">WhatsApp</button>
+                        <button onclick="setQRType('call')" id="tab-call" class="flex-1 px-3 py-2.5 text-center rounded-lg hover:bg-gray-50 transition text-sm md:text-base text-gray-500">Call</button>
+                        <button onclick="setQRType('text')" id="tab-text" class="flex-1 px-3 py-2.5 text-center rounded-lg hover:bg-gray-50 transition text-sm md:text-base text-gray-500">Text</button>
+                        <button onclick="setQRType('vcard')" id="tab-vcard" class="flex-1 px-3 py-2.5 text-center rounded-lg hover:bg-gray-50 transition text-sm md:text-base text-gray-500">VCard</button>
                     </div>
                 </div>
 
                 <!-- Input Form -->
-                <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
                     
                     <!-- URL Input -->
-                    <div id="input-url" class="input-section border-2 border-amber-300 rounded-lg p-4 bg-amber-50">
-                        <label class="block text-sm font-semibold text-orange-600 mb-2">Enter URL</label>
-                        <input type="url" id="url-input" placeholder="https://atlasbiznow.com" class="w-full px-4 py-3 border-2 border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition bg-white" oninput="generateQR()">
+                    <div id="input-url" class="input-section border border-brand/40 rounded-lg p-4 bg-orange-50/50">
+                        <label class="block text-sm font-semibold text-branddark mb-2">Enter URL</label>
+                        <input type="url" id="url-input" placeholder="https://atlasbiznow.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition bg-white" oninput="generateQR()">
                     </div>
 
                     <!-- WiFi Input -->
@@ -155,15 +160,15 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Network Name (SSID)</label>
-                                <input type="text" id="wifi-ssid" placeholder="MyWiFi-Network" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                <input type="text" id="wifi-ssid" placeholder="MyWiFi-Network" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                                <input type="text" id="wifi-password" placeholder="YourWiFiPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                <input type="text" id="wifi-password" placeholder="YourWiFiPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Encryption</label>
-                                <select id="wifi-encryption" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" onchange="generateQR()">
+                                <select id="wifi-encryption" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" onchange="generateQR()">
                                     <option value="WPA">WPA/WPA2</option>
                                     <option value="WEP">WEP</option>
                                     <option value="nopass">None</option>
@@ -177,15 +182,15 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                                <input type="email" id="email-address" placeholder="john@example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" oninput="generateQR()">
+                                <input type="email" id="email-address" placeholder="john@example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Subject (Optional)</label>
-                                <input type="text" id="email-subject" placeholder="Email subject" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" oninput="generateQR()">
+                                <input type="text" id="email-subject" placeholder="Email subject" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Body (Optional)</label>
-                                <textarea id="email-body" rows="3" placeholder="Email message body" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" oninput="generateQR()"></textarea>
+                                <textarea id="email-body" rows="3" placeholder="Email message body" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()"></textarea>
                             </div>
                         </div>
                     </div>
@@ -195,11 +200,11 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                <input type="tel" id="sms-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition" oninput="generateQR()">
+                                <input type="tel" id="sms-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Message (Optional)</label>
-                                <textarea id="sms-message" rows="3" placeholder="SMS message" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition" oninput="generateQR()"></textarea>
+                                <textarea id="sms-message" rows="3" placeholder="SMS message" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()"></textarea>
                             </div>
                         </div>
                     </div>
@@ -209,11 +214,11 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                <input type="tel" id="whatsapp-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 transition" oninput="generateQR()">
+                                <input type="tel" id="whatsapp-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Pre-filled Message (Optional)</label>
-                                <textarea id="whatsapp-message" rows="3" placeholder="Message to pre-fill" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 transition" oninput="generateQR()"></textarea>
+                                <textarea id="whatsapp-message" rows="3" placeholder="Message to pre-fill" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()"></textarea>
                             </div>
                         </div>
                     </div>
@@ -222,14 +227,14 @@
                     <div id="input-call" class="input-section hidden">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                            <input type="tel" id="call-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                            <input type="tel" id="call-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                         </div>
                     </div>
 
                     <!-- Text Input -->
                     <div id="input-text" class="input-section hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Enter Text</label>
-                        <textarea id="text-input" rows="4" placeholder="Enter any text content..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()"></textarea>
+                        <textarea id="text-input" rows="4" placeholder="Enter any text content..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()"></textarea>
                     </div>
 
                     <!-- VCard Input -->
@@ -238,34 +243,34 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                    <input type="text" id="vcard-firstname" placeholder="John" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                    <input type="text" id="vcard-firstname" placeholder="John" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                    <input type="text" id="vcard-lastname" placeholder="Doe" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                    <input type="text" id="vcard-lastname" placeholder="Doe" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                                <input type="tel" id="vcard-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                <input type="tel" id="vcard-phone" placeholder="+1 555 123 4567" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                <input type="email" id="vcard-email" placeholder="john@example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                <input type="email" id="vcard-email" placeholder="john@example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Company</label>
-                                <input type="text" id="vcard-company" placeholder="AtlasBizNow LLC" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                <input type="text" id="vcard-company" placeholder="AtlasBizNow LLC" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
-                                <input type="url" id="vcard-website" placeholder="https://atlasbiznow.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" oninput="generateQR()">
+                                <input type="url" id="vcard-website" placeholder="https://atlasbiznow.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition" oninput="generateQR()">
                             </div>
                         </div>
                     </div>
 
                     <!-- Customization Options -->
-                    <div class="mt-6 pt-6 border-t">
+                    <div class="mt-6 pt-6 border-t border-gray-100">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Customize QR Code</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -278,22 +283,22 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <label class="block text-sm font-semibold text-orange-600 mb-2">Logo/Image (Optional)</label>
-                            <input type="file" id="logo-input" accept="image/*" class="w-full px-4 py-3 border-2 border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition bg-white" onchange="handleLogoUpload()">
-                            <p class="text-xs text-amber-600 mt-1 font-medium">Upload a logo to embed in the center of the QR code</p>
+                            <label class="block text-sm font-semibold text-branddark mb-2">Logo/Image (Optional)</label>
+                            <input type="file" id="logo-input" accept="image/*" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition bg-white" onchange="handleLogoUpload()">
+                            <p class="text-xs text-gray-500 mt-1">Upload a logo to embed in the center of the QR code</p>
                         </div>
                         <div class="mt-4">
-                            <label class="block text-sm font-semibold text-orange-600 mb-2">Design your QR Code</label>
+                            <label class="block text-sm font-semibold text-branddark mb-2">Design your QR Code</label>
                             <div class="flex gap-2">
-                                <button onclick="setQRFrame('none')" id="frame-none" class="flex-1 px-4 py-2 border-2 border-orange-400 rounded-lg bg-orange-50 font-medium text-orange-700 transition">None</button>
-                                <button onclick="setQRFrame('bottom')" id="frame-bottom" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition">Text Bottom</button>
-                                <button onclick="setQRFrame('top')" id="frame-top" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition">Text Top</button>
+                                <button onclick="setQRFrame('none')" id="frame-none" class="flex-1 px-4 py-2 border-2 border-brand rounded-lg bg-orange-50 font-medium text-branddark transition">None</button>
+                                <button onclick="setQRFrame('bottom')" id="frame-bottom" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-brand hover:bg-orange-50 font-medium text-gray-600 transition">Text Bottom</button>
+                                <button onclick="setQRFrame('top')" id="frame-top" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-brand hover:bg-orange-50 font-medium text-gray-600 transition">Text Top</button>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 mt-4" id="frame-customization" style="display: none;">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Frame Text</label>
-                                <input type="text" id="frame-text" value="SCAN ME" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition bg-white" oninput="generateQR()">
+                                <input type="text" id="frame-text" value="SCAN ME" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition bg-white" oninput="generateQR()">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Frame Color</label>
@@ -305,47 +310,36 @@
                 </div>
             </div>
 
-            <!-- Right Column - QR Preview & Sidebar Ad -->
+            <!-- Right Column - QR Preview -->
             <div class="lg:col-span-1">
-                
-                <!-- Sidebar Ad -->
-                <div class="mb-6" style="min-height: 280px;">
-                    <ins class="adsbygoogle"
-                         style="display:block; width: 100%; height: 280px;"
-                         data-ad-client="ca-pub-1671032738156637"
-                         data-ad-slot="6733391932"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                </div>
 
                 <!-- QR Preview -->
-                <div class="qr-preview-section bg-white rounded-xl shadow-sm border p-6">
-                    <h2 class="text-lg font-bold text-orange-800 mb-4 text-center">Your QR Code</h2>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-28">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4 text-center">Your QR Code</h2>
                     <div class="qr-canvas" id="qr-container">
-                        <p class="text-gray-400 text-center">Enter content above to generate QR code</p>
+                        <p class="text-gray-400 text-center text-sm">Enter content above to generate QR code</p>
                     </div>
                     <div id="qr-container-hidden" style="display: none;"></div>
                     <div class="mt-4 flex gap-2">
-                        <button onclick="downloadQR('png')" class="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Download PNG</button>
-                        <button onclick="downloadQR('svg')" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-400 hover:from-yellow-600 hover:to-orange-500 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">Download SVG</button>
+                        <button onclick="requestDownload('png')" class="flex-1 bg-brand hover:bg-branddark text-white font-bold py-3 px-4 rounded-lg transition shadow-sm">Download PNG</button>
+                        <button onclick="requestDownload('svg')" class="flex-1 bg-ink hover:bg-gray-800 text-white font-bold py-3 px-4 rounded-lg transition shadow-sm">Download SVG</button>
+                    </div>
+
+                    <!-- Powered by ABN cross-sell card (shown after QR generation) -->
+                    <div id="upsell-card" class="hidden mt-5 pt-5 border-t border-gray-100">
+                        <p class="text-sm text-gray-700 font-medium">Your QR code is live. Want a landing page to match?</p>
+                        <p class="text-xs text-gray-500 mt-1">We build custom websites that convert.</p>
+                        <a href="https://atlasbiznow.com/free-consultation/" target="_blank" rel="noopener" class="mt-3 inline-block w-full text-center bg-gray-100 hover:bg-gray-200 text-ink font-semibold text-sm py-2.5 rounded-lg transition">
+                            Free Consult →
+                        </a>
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <!-- In-Content Ad -->
-        <div class="my-8" style="min-height: 250px;">
-            <ins class="adsbygoogle"
-                 style="display:block; text-align:center; width: 100%; height: 250px;"
-                 data-ad-layout="in-article"
-                 data-ad-format="fluid"
-                 data-ad-client="ca-pub-1671032738156637"
-                 data-ad-slot="2937391812"></ins>
-        </div>
-
         <!-- How to Use Section -->
-        <section class="mt-12 bg-white rounded-xl shadow-sm border p-8">
+        <section class="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">How to Make a QR Code</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -368,7 +362,7 @@
         </section>
 
         <!-- FAQ Section -->
-        <section class="mt-8 bg-white rounded-xl shadow-sm border p-8">
+        <section class="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h2>
             <div class="space-y-6">
                 <div>
@@ -401,7 +395,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gradient-to-r from-gray-800 via-gray-800 to-orange-900 text-gray-300 mt-12" style="border-top: 4px solid #f59e0b;">
+    <footer class="bg-ink text-gray-400 mt-12">
         <div class="max-w-6xl mx-auto px-4 py-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
@@ -411,9 +405,9 @@
                 <div>
                     <h4 class="text-white font-semibold mb-3">Quick Links</h4>
                     <ul class="text-sm space-y-2">
-                        <li><a href="privacy.html" class="hover:text-yellow-400 transition">Privacy Policy</a></li>
-                        <li><a href="terms.html" class="hover:text-yellow-400 transition">Terms of Service</a></li>
-                        <li><a href="https://www.atlasbiznow.com" class="hover:text-yellow-400 transition">AtlasBizNow</a></li>
+                        <li><a href="privacy.html" class="hover:text-brand transition">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="hover:text-brand transition">Terms of Service</a></li>
+                        <li><a href="https://www.atlasbiznow.com" class="hover:text-brand transition">AtlasBizNow</a></li>
                     </ul>
                 </div>
                 <div>
@@ -421,26 +415,36 @@
                     <p class="text-sm">Questions? Email us at contact@atlasbiznow.com</p>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
                 <p>&copy; 2026 AtlasBizNow LLC. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- AdSense Initialization -->
-    <script>
-        // Initialize each ad unit individually
-        (function() {
-            const ads = document.querySelectorAll('.adsbygoogle');
-            ads.forEach(function(ad) {
-                try {
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                } catch(e) {
-                    console.log('AdSense init error:', e);
-                }
-            });
-        })();
-    </script>
+    <!-- Email Gate Modal -->
+    <div id="gate-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeGate()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+            <button onclick="closeGate()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition" aria-label="Close">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="text-center mb-5">
+                <img src="https://atlasbiznow.com/wp-content/uploads/2026/08/abn_logo_email.png" alt="AtlasBizNow.com" class="h-10 w-auto mx-auto mb-3">
+                <h3 class="text-lg font-bold text-gray-800">Get your QR code</h3>
+                <p class="text-sm text-gray-500 mt-1">Plus free monthly marketing tips for small businesses.</p>
+            </div>
+            <form id="gate-form" class="space-y-3" novalidate>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="gate-email">Email address</label>
+                    <input type="email" id="gate-email" name="email" required autocomplete="email" placeholder="you@example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition">
+                </div>
+                <p id="gate-error" class="hidden text-sm text-red-600"></p>
+                <button type="submit" id="gate-submit" class="w-full bg-brand hover:bg-branddark text-white font-bold py-3 rounded-lg transition shadow-sm">Get My QR Code</button>
+                <p class="text-xs text-gray-400 text-center">We respect your privacy — never share your email. Unsubscribe anytime.</p>
+            </form>
+            <p id="gate-success" class="hidden text-center text-sm text-green-600 font-medium mt-2">Check your inbox — your download is starting!</p>
+        </div>
+    </div>
 
     <!-- Application Scripts -->
     <script>
@@ -450,6 +454,11 @@
         let uploadedLogo = null;
         let currentQRShape = 'square';
         let currentQRFrame = 'none';
+        let pendingFormat = null;
+        let qrGenerated = false;
+
+        const EMAIL_ENDPOINT = 'https://atlasbiznow.com/wp-json/atlasbiznow/v1/subscribe';
+        const GATE_DONE_KEY = 'abn_qr_lead_done';
 
         // Polyfill for roundRect if not supported
         if (!CanvasRenderingContext2D.prototype.roundRect) {
@@ -473,10 +482,10 @@
             const btnTop = document.getElementById('frame-top');
             
             [btnNone, btnBottom, btnTop].forEach(btn => {
-                btn.className = 'flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 font-medium text-gray-600 transition';
+                btn.className = 'flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-brand hover:bg-orange-50 font-medium text-gray-600 transition';
             });
             
-            document.getElementById(`frame-${frame}`).className = 'flex-1 px-4 py-2 border-2 border-orange-400 rounded-lg bg-orange-50 font-medium text-orange-700 transition';
+            document.getElementById(`frame-${frame}`).className = 'flex-1 px-4 py-2 border-2 border-brand rounded-lg bg-orange-50 font-medium text-branddark transition';
             
             document.getElementById('frame-customization').style.display = frame === 'none' ? 'none' : 'grid';
             
@@ -489,10 +498,10 @@
             
             document.querySelectorAll('[id^="tab-"]').forEach(tab => {
                 tab.classList.remove('tab-active');
-                tab.classList.add('text-gray-600');
+                tab.classList.add('text-gray-500');
             });
             document.getElementById(`tab-${type}`).classList.add('tab-active');
-            document.getElementById(`tab-${type}`).classList.remove('text-gray-600');
+            document.getElementById(`tab-${type}`).classList.remove('text-gray-500');
             
             document.querySelectorAll('.input-section').forEach(section => {
                 section.classList.add('hidden');
@@ -562,7 +571,9 @@
             hiddenContainer.innerHTML = '';
             
             if (!data) {
-                visibleContainer.innerHTML = '<p class="text-gray-400 text-center">Enter content above to generate QR code</p>';
+                visibleContainer.innerHTML = '<p class="text-gray-400 text-center text-sm">Enter content above to generate QR code</p>';
+                qrGenerated = false;
+                document.getElementById('upsell-card').classList.add('hidden');
                 return;
             } else {
                 visibleContainer.innerHTML = '';
@@ -645,6 +656,8 @@
                 }
                 
                 visibleContainer.appendChild(finalCanvas);
+                qrGenerated = true;
+                document.getElementById('upsell-card').classList.remove('hidden');
             }, 50);
         }
 
@@ -663,14 +676,100 @@
             }
         }
 
-        // Download QR code
-        function downloadQR(format) {
+        // Request download — intercept with email gate
+        function requestDownload(format) {
             const canvas = document.querySelector('#qr-container canvas');
             
             if (!canvas) {
                 alert('Please generate a QR code first');
                 return;
             }
+            
+            pendingFormat = format;
+            
+            // Returning visitor who already gave email? Skip gate.
+            try {
+                if (localStorage.getItem(GATE_DONE_KEY)) {
+                    doDownload(format);
+                    return;
+                }
+            } catch (e) { /* localStorage may be blocked */ }
+            
+            openGate();
+        }
+
+        // Open email gate modal
+        function openGate() {
+            document.getElementById('gate-modal').classList.remove('hidden');
+            document.getElementById('gate-error').classList.add('hidden');
+            document.getElementById('gate-success').classList.add('hidden');
+            document.getElementById('gate-submit').disabled = false;
+            document.getElementById('gate-submit').textContent = 'Get My QR Code';
+            setTimeout(() => document.getElementById('gate-email').focus(), 100);
+        }
+
+        function closeGate() {
+            document.getElementById('gate-modal').classList.add('hidden');
+            pendingFormat = null;
+        }
+
+        // Submit gate form
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('gate-form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('gate-email').value.trim();
+                const errorEl = document.getElementById('gate-error');
+                const submitBtn = document.getElementById('gate-submit');
+                
+                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    errorEl.textContent = 'Please enter a valid email address.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'One moment...';
+                
+                fetch(EMAIL_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                })
+                .then(r => r.json())
+                .then(res => {
+                    // Success OR already subscribed (409 handled server-side as success)
+                    try { localStorage.setItem(GATE_DONE_KEY, '1'); } catch (err) {}
+                    document.getElementById('gate-success').classList.remove('hidden');
+                    submitBtn.textContent = 'Done — downloading';
+                    setTimeout(() => {
+                        closeGate();
+                        if (pendingFormat) {
+                            doDownload(pendingFormat);
+                            pendingFormat = null;
+                        }
+                    }, 900);
+                })
+                .catch(err => {
+                    // Network error — still allow download, but log
+                    try { localStorage.setItem(GATE_DONE_KEY, '1'); } catch (e2) {}
+                    document.getElementById('gate-success').classList.remove('hidden');
+                    submitBtn.textContent = 'Done — downloading';
+                    setTimeout(() => {
+                        closeGate();
+                        if (pendingFormat) {
+                            doDownload(pendingFormat);
+                            pendingFormat = null;
+                        }
+                    }, 900);
+                });
+            });
+        });
+
+        // Actual download logic
+        function doDownload(format) {
+            const canvas = document.querySelector('#qr-container canvas');
+            if (!canvas) return;
             
             if (format === 'png') {
                 const link = document.createElement('a');
