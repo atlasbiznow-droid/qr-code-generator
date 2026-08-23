@@ -317,7 +317,7 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-28">
                     <h2 class="text-lg font-bold text-gray-800 mb-4 text-center">Your QR Code</h2>
                     <div class="qr-canvas" id="qr-container">
-                        <p class="text-gray-400 text-center text-sm">Enter content above to generate QR code</p>
+                        <p class="text-gray-400 text-center text-sm">Enter content on the left to generate QR code</p>
                     </div>
                     <div id="qr-container-hidden" style="display: none;"></div>
                     <div class="mt-4 flex gap-2">
@@ -574,7 +574,7 @@
             hiddenContainer.innerHTML = '';
             
             if (!data) {
-                visibleContainer.innerHTML = '<p class="text-gray-400 text-center text-sm">Enter content above to generate QR code</p>';
+                visibleContainer.innerHTML = '<p class="text-gray-400 text-center text-sm">Enter content on the left to generate QR code</p>';
                 qrGenerated = false;
                 document.getElementById('upsell-card').classList.add('hidden');
                 return;
