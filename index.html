@@ -683,7 +683,7 @@
             }
         }
 
-        // Request download — intercept with email gate
+        // Request download — intercept with email gate (always show)
         function requestDownload(format) {
             const canvas = document.querySelector('#qr-container canvas');
             
@@ -693,15 +693,6 @@
             }
             
             pendingFormat = format;
-            
-            // Returning visitor who already gave email? Skip gate.
-            try {
-                if (localStorage.getItem(GATE_DONE_KEY)) {
-                    doDownload(format);
-                    return;
-                }
-            } catch (e) { /* localStorage may be blocked */ }
-            
             openGate();
         }
 
