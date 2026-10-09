@@ -224,6 +224,22 @@
         #gate-modal.gate-in .gate-backdrop { opacity: 1; }
         #gate-modal.gate-in .gate-card { opacity: 1; transform: none; }
 
+        /* Title flair — warm gradient shimmer on the key noun */
+        .qr-flair {
+            background-image: linear-gradient(100deg, #f97316, #fb923c, #ea580c, #f97316);
+            background-size: 260% 100%;
+            background-position: 0% 50%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            animation: qr-flair 7s ease-in-out infinite;
+        }
+        @keyframes qr-flair {
+            0%, 100% { background-position: 0% 50%; }
+            50%      { background-position: 100% 50%; }
+        }
+
         /* Reduced motion — a gentler, non-vestibular equivalent (never zero feedback) */
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto; }
@@ -258,7 +274,7 @@
             </div>
         </div>
         <div class="relative max-w-6xl mx-auto px-4 pb-6 pt-1 text-center">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-ink">Free QR Code Generator</h1>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-ink">Free <span class="qr-flair">QR Code</span> Generator</h1>
             <p class="text-sm md:text-base text-gray-500 mt-2">Permanent custom QR codes · Quick sign up · PNG &amp; SVG</p>
         </div>
     </header>
