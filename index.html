@@ -141,8 +141,21 @@
         }
         html { scroll-behavior: smooth; }
         body { font-family: 'Inter', sans-serif; }
+
+        /* Size-specific tracking — display type reads tight, body stays open */
+        h1, h2 { letter-spacing: -0.02em; }
+
+        /* Instant press feedback — confirm on pointer-down, not on release */
+        button, a {
+            transition: transform 120ms cubic-bezier(0.2, 0, 0, 1),
+                        background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+        }
+        button:active, a:active { transform: scale(0.97); }
+
+        /* Reserve the indicator strip so the active tab never shifts layout */
+        [id^="tab-"] { border-bottom: 3px solid transparent; }
         .tab-active {
-            border-bottom: 3px solid var(--primary);
+            border-bottom-color: var(--primary);
             color: var(--primary);
             font-weight: 600;
         }
@@ -165,6 +178,20 @@
             border-radius: 50%;
         }
         .input-section { transition: opacity .15s ease; }
+
+        /* Reduced motion — a gentler, non-vestibular equivalent (never zero feedback) */
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+            }
+            button:active, a:active { transform: none; }
+        }
+        @media (prefers-contrast: more) {
+            .qr-canvas, .input-section { border-color: #111 !important; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
@@ -388,6 +415,7 @@
                     <div class="qr-canvas" id="qr-container">
                         <p class="text-gray-400 text-center text-sm">Enter content in the other box to generate QR code</p>
                     </div>
+                    <p id="qr-status" role="status" aria-live="polite" class="text-xs text-gray-500 text-center mt-2 min-h-[1rem]"></p>
                     <div id="qr-container-hidden" style="display: none;"></div>
                     <div class="mt-4 flex gap-2">
                         <button onclick="requestDownload('png')" class="flex-1 bg-brand hover:bg-branddark text-white font-bold py-3 px-4 rounded-lg transition shadow-sm">Download PNG</button>
@@ -781,7 +809,8 @@
             const canvas = document.querySelector('#qr-container canvas');
             
             if (!canvas) {
-                alert('Please generate a QR code first');
+                const status = document.getElementById('qr-status');
+                if (status) status.textContent = 'Add some content above to generate your QR code first.';
                 return;
             }
             
@@ -901,6 +930,8 @@
                 link.click();
                 setTimeout(() => URL.revokeObjectURL(link.href), 1000);
             }
+            const status = document.getElementById('qr-status');
+            if (status) status.textContent = 'Downloaded qrcode.' + format + ' \u2713';
         }
 
         // Initialize
