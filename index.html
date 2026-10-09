@@ -138,6 +138,9 @@
         :root {
             --primary: #f97316;
             --secondary: #ea580c;
+            /* Motion tokens (Emil Kowalski values — strong curves, not built-ins) */
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+            --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
         }
         html { scroll-behavior: smooth; }
         body { font-family: 'Inter', sans-serif; }
@@ -152,13 +155,8 @@
         }
         button:active, a:active { transform: scale(0.97); }
 
-        /* Reserve the indicator strip so the active tab never shifts layout */
-        [id^="tab-"] { border-bottom: 3px solid transparent; }
-        .tab-active {
-            border-bottom-color: var(--primary);
-            color: var(--primary);
-            font-weight: 600;
-        }
+        /* Active tab reads as a filled pill (bg/color applied inline by setQRType) */
+        .tab-active { font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
         .qr-canvas {
             display: flex;
             justify-content: center;
@@ -179,6 +177,53 @@
         }
         .input-section { transition: opacity .15s ease; }
 
+        /* --- Motion layer (rare/first-time delight + non-jarring state changes) --- */
+        .qr-canvas { position: relative; }
+
+        /* QR reveal — the rare "first see your code" moment. Delight budget lives here. */
+        .qr-reveal { animation: qr-in 420ms var(--ease-out) both; }
+        @keyframes qr-in {
+            from { opacity: 0; transform: translateY(8px) scale(0.94); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* One-time scan sweep + ring pulse on a freshly generated code (transform/opacity only) */
+        .qr-fx {
+            position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+        }
+        .qr-fx::after {
+            content: ""; position: absolute; left: 0; right: 0; top: 0; height: 32%;
+            background: linear-gradient(to bottom, transparent, rgba(249,115,22,0.30), transparent);
+            transform: translateY(-140%);
+            animation: qr-scan 680ms var(--ease-in-out) 120ms 1 both;
+        }
+        @keyframes qr-scan { to { transform: translateY(460%); } }
+        .qr-ring {
+            position: absolute; inset: 0; border-radius: inherit;
+            border: 2px solid var(--primary);
+            animation: qr-ring 560ms var(--ease-out) 120ms 1 both;
+        }
+        @keyframes qr-ring {
+            from { opacity: 0.5; transform: scale(0.9); }
+            to   { opacity: 0;   transform: scale(1); }
+        }
+
+        /* Input pane swap + upsell reveal — bridge teleporting content */
+        .fade-up { animation: fade-up 280ms var(--ease-out) both; }
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        /* Email gate modal — backdrop fade, card scales in (modal stays centered) */
+        #gate-modal .gate-backdrop { opacity: 0; transition: opacity 220ms ease; }
+        #gate-modal .gate-card {
+            opacity: 0; transform: translateY(8px) scale(0.96);
+            transition: opacity 220ms ease, transform 260ms var(--ease-out);
+        }
+        #gate-modal.gate-in .gate-backdrop { opacity: 1; }
+        #gate-modal.gate-in .gate-card { opacity: 1; transform: none; }
+
         /* Reduced motion — a gentler, non-vestibular equivalent (never zero feedback) */
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto; }
@@ -197,8 +242,9 @@
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
 
     <!-- Header -->
-    <header class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto px-4 py-3">
+    <header class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-40 overflow-hidden">
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-40" style="background: radial-gradient(60% 130% at 50% 0%, rgba(249,115,22,0.13), transparent 70%);"></div>
+        <div class="relative max-w-6xl mx-auto px-4 py-3">
             <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
                     <a href="https://atlasbiznow.com" aria-label="AtlasBizNow - Home">
@@ -211,9 +257,9 @@
                 </a>
             </div>
         </div>
-        <div class="max-w-6xl mx-auto px-4 pb-4 text-center">
-            <h1 class="text-2xl md:text-3xl font-extrabold text-ink">Free QR Code Generator</h1>
-            <p class="text-sm text-gray-500 mt-1">Permanent custom QR codes · Quick sign up · PNG &amp; SVG</p>
+        <div class="relative max-w-6xl mx-auto px-4 pb-6 pt-1 text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-ink">Free QR Code Generator</h1>
+            <p class="text-sm md:text-base text-gray-500 mt-2">Permanent custom QR codes · Quick sign up · PNG &amp; SVG</p>
         </div>
     </header>
 
@@ -410,8 +456,13 @@
             <div class="lg:col-span-1">
 
                 <!-- QR Preview -->
-                <div class="bg-white rounded-xl shadow-sm border-2 border-brand p-6 sticky top-28">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 text-center">Your QR Code</h2>
+                <div class="bg-white rounded-2xl border border-orange-200 p-6 sticky top-36" style="box-shadow: 0 18px 50px -20px rgba(249,115,22,0.55);">
+                    <div class="text-center mb-4">
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-branddark bg-orange-100/70 px-2.5 py-1 rounded-full mb-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-brand"></span> Live Preview
+                        </span>
+                        <h2 class="text-lg font-bold text-gray-800">Your QR Code</h2>
+                    </div>
                     <div class="qr-canvas" id="qr-container">
                         <p class="text-gray-400 text-center text-sm">Enter content in the other box to generate QR code</p>
                     </div>
@@ -546,8 +597,8 @@
 
     <!-- Email Gate Modal -->
     <div id="gate-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeGate()"></div>
-        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+        <div class="gate-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeGate()"></div>
+        <div class="gate-card relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
             <button onclick="closeGate()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition" aria-label="Close">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
@@ -626,14 +677,21 @@
             document.querySelectorAll('[id^="tab-"]').forEach(tab => {
                 tab.classList.remove('tab-active');
                 tab.classList.add('text-gray-500');
+                tab.style.background = '';
+                tab.style.color = '';
             });
-            document.getElementById(`tab-${type}`).classList.add('tab-active');
-            document.getElementById(`tab-${type}`).classList.remove('text-gray-500');
+            const activeTab = document.getElementById(`tab-${type}`);
+            activeTab.classList.add('tab-active');
+            activeTab.classList.remove('text-gray-500');
+            activeTab.style.background = 'var(--primary)';
+            activeTab.style.color = '#ffffff';
             
             document.querySelectorAll('.input-section').forEach(section => {
                 section.classList.add('hidden');
             });
-            document.getElementById(`input-${type}`).classList.remove('hidden');
+            const pane = document.getElementById(`input-${type}`);
+            pane.classList.remove('hidden');
+            pane.classList.remove('fade-up'); void pane.offsetWidth; pane.classList.add('fade-up');
             
             generateQR();
         }
@@ -783,8 +841,27 @@
                 }
                 
                 visibleContainer.appendChild(finalCanvas);
+
+                // First time a visitor sees their code — the delight moment.
+                const firstReveal = !qrGenerated;
                 qrGenerated = true;
-                document.getElementById('upsell-card').classList.remove('hidden');
+                if (firstReveal) {
+                    finalCanvas.classList.add('qr-reveal');
+                    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    if (!reduce) {
+                        const fx = document.createElement('div');
+                        fx.className = 'qr-fx';
+                        fx.innerHTML = '<span class="qr-ring"></span>';
+                        visibleContainer.appendChild(fx);
+                        setTimeout(() => fx.remove(), 1000);
+                    }
+                }
+
+                const up = document.getElementById('upsell-card');
+                if (up.classList.contains('hidden')) {
+                    up.classList.remove('hidden');
+                    up.classList.remove('fade-up'); void up.offsetWidth; up.classList.add('fade-up');
+                }
             }, 50);
         }
 
@@ -829,17 +906,22 @@
 
         // Open email gate modal
         function openGate() {
-            document.getElementById('gate-modal').classList.remove('hidden');
+            const modal = document.getElementById('gate-modal');
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;                 // flush display change so the entrance plays
+            modal.classList.add('gate-in');
             document.getElementById('gate-error').classList.add('hidden');
             document.getElementById('gate-success').classList.add('hidden');
             document.getElementById('gate-submit').disabled = false;
             document.getElementById('gate-submit').textContent = 'Get My QR Code';
-            setTimeout(() => document.getElementById('gate-email').focus(), 100);
+            setTimeout(() => document.getElementById('gate-email').focus(), 120);
         }
 
         function closeGate() {
-            document.getElementById('gate-modal').classList.add('hidden');
+            const modal = document.getElementById('gate-modal');
+            modal.classList.remove('gate-in');
             pendingFormat = null;
+            setTimeout(() => modal.classList.add('hidden'), 240);
         }
 
         // Submit gate form
