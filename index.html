@@ -507,7 +507,7 @@
         </div>
 
         <!-- Sales Letter CTA Band -->
-        <section class="mt-12 bg-gradient-to-br from-gray-900 to-[#1a1a1a] text-white rounded-2xl p-8 md:p-10 text-center shadow-xl border-2 border-orange-500/30">
+        <section data-reveal class="mt-12 bg-gradient-to-br from-gray-900 to-[#1a1a1a] text-white rounded-2xl p-8 md:p-10 text-center shadow-xl border-2 border-orange-500/30">
             <h2 class="text-2xl md:text-3xl font-extrabold text-white" style="font-family: 'Playfair Display', serif;">Turn Your Business Into a Customer-Generating Machine</h2>
             <p class="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mt-3 leading-relaxed">
                 From automated phone &amp; website booking agents to social media that runs itself — see exactly how AtlasBizNow keeps small businesses visible, booked, and growing 24/7.
@@ -524,8 +524,8 @@
 
         <!-- How to Use Section -->
         <section class="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">How to Make a QR Code</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <h2 data-reveal class="text-2xl font-bold text-gray-800 mb-6">How to Make a QR Code</h2>
+            <div data-reveal-stagger class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">Step 1: Choose QR Type</h3>
                     <p class="text-gray-600">Select the type of QR code you need: URL for websites, WiFi for network credentials, Text for plain text, or VCard for contact information.</p>
@@ -547,8 +547,8 @@
 
         <!-- FAQ Section -->
         <section class="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h2>
-            <div class="space-y-6">
+            <h2 data-reveal class="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h2>
+            <div data-reveal-stagger class="space-y-6">
                 <div>
                     <h3 class="text-lg font-semibold text-gray-800 mb-2">Are QR codes free to generate?</h3>
                     <p class="text-gray-600">Yes! Our QR code generator is completely free. <a href="https://qr.atlasbiznow.com" class="text-brand font-semibold hover:underline">Quick sign up</a>, no hidden fees. Generate as many QR codes as you need.</p>
@@ -1066,6 +1066,33 @@
                 }
             } catch (e) { /* ignore */ }
         });
+    </script>
+
+    <!-- GSAP + ScrollTrigger — tasteful, reduced-motion-safe scroll reveals -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script>
+        (function () {
+            var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduce || !window.gsap || !window.ScrollTrigger) return;
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Section reveals: fade + rise as each block scrolls into view (once).
+            gsap.utils.toArray('[data-reveal]').forEach(function (el) {
+                gsap.from(el, {
+                    opacity: 0, y: 28, duration: 0.6, ease: 'power2.out',
+                    scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+                });
+            });
+
+            // Gentle 80ms stagger for grouped items (steps, FAQ) — decorative, never blocks.
+            gsap.utils.toArray('[data-reveal-stagger]').forEach(function (box) {
+                gsap.from(box.children, {
+                    opacity: 0, y: 18, duration: 0.5, ease: 'power2.out', stagger: 0.08,
+                    scrollTrigger: { trigger: box, start: 'top 82%', once: true }
+                });
+            });
+        })();
     </script>
 </body>
 </html>
