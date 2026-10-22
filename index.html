@@ -25,6 +25,46 @@
     
     <!-- Canonical -->
     <link rel="canonical" href="https://qr.atlasbiznow.com/">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="ABN Free QR Code Generator — custom QR codes with your logo, PNG and SVG">
+    <meta property="og:site_name" content="ABN Free QR Code Generator">
+    <meta name="twitter:image" content="https://qr.atlasbiznow.com/og-image.png">
+
+    <!-- WebSite + Breadcrumb + HowTo schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://qr.atlasbiznow.com/#website",
+          "url": "https://qr.atlasbiznow.com/",
+          "name": "ABN Free QR Code Generator",
+          "publisher": { "@type": "Organization", "name": "AtlasBizNow", "url": "https://atlasbiznow.com" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://atlasbiznow.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Free QR Code Generator", "item": "https://qr.atlasbiznow.com/" }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to Make a QR Code",
+          "description": "Create a free, permanent custom QR code with your logo in four steps.",
+          "totalTime": "PT2M",
+          "step": [
+            { "@type": "HowToStep", "position": 1, "name": "Choose QR type", "text": "Select URL, WiFi, email, SMS, WhatsApp, phone, text, or vCard." },
+            { "@type": "HowToStep", "position": 2, "name": "Enter content", "text": "Paste your link or enter the details for the QR code." },
+            { "@type": "HowToStep", "position": 3, "name": "Customize", "text": "Add a logo, set colors, and adjust the design." },
+            { "@type": "HowToStep", "position": 4, "name": "Download", "text": "Download a high-resolution PNG or vector SVG file." }
+          ]
+        }
+      ]
+    }
+    </script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -505,6 +545,58 @@
 
             </div>
         </div>
+
+        <!-- Key takeaways + definition -->
+        <section id="why-abn" class="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Why use ABN's free QR code generator</h2>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-600">
+                <li><span class="text-branddark font-bold">✓</span> <strong>Free &amp; permanent</strong> — no subscription, no expiry, no watermark.</li>
+                <li><span class="text-branddark font-bold">✓</span> <strong>Custom logo &amp; colors</strong> — brand every code with your own image.</li>
+                <li><span class="text-branddark font-bold">✓</span> <strong>PNG &amp; vector SVG</strong> — print-ready at any size, from business cards to billboards.</li>
+                <li><span class="text-branddark font-bold">✓</span> <strong>8 QR types</strong> — URL, WiFi, email, SMS, WhatsApp, phone, text and vCard.</li>
+            </ul>
+            <p class="mt-4 text-gray-600"><strong>What it is:</strong> a free browser-based QR code generator that turns a link, WiFi network, contact card or message into a scannable code — generated locally in your browser, with no account and no expiry. <strong>What it is not:</strong> a paid “dynamic QR” service that hosts a redirect and charges a monthly fee; every code you create here is static and permanent, so it keeps working forever.</p>
+        </section>
+
+        <!-- Comparison table -->
+        <section id="compare" class="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">ABN vs. typical paid QR code services</h2>
+            <p class="text-gray-500 text-sm mb-5">A side-by-side look at what most people actually need from a QR code.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="py-3 pr-4 font-semibold text-gray-800">Feature</th>
+                            <th class="py-3 px-4 font-semibold text-gray-800 bg-orange-50">ABN (free)</th>
+                            <th class="py-3 pl-4 font-semibold text-gray-500">Typical paid QR service</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-600">
+                        <tr class="border-b border-gray-100"><td class="py-3 pr-4">Price</td><td class="py-3 px-4 bg-orange-50 font-semibold text-gray-900">$0, forever</td><td class="py-3 pl-4">Roughly $5–$40 / month</td></tr>
+                        <tr class="border-b border-gray-100"><td class="py-3 pr-4">Expiry</td><td class="py-3 px-4 bg-orange-50 font-semibold text-gray-900">Never</td><td class="py-3 pl-4">Often stops on cancellation</td></tr>
+                        <tr class="border-b border-gray-100"><td class="py-3 pr-4">Custom logo</td><td class="py-3 px-4 bg-orange-50 font-semibold text-gray-900">Included</td><td class="py-3 pl-4">Usually a paid tier</td></tr>
+                        <tr class="border-b border-gray-100"><td class="py-3 pr-4">SVG (vector) download</td><td class="py-3 px-4 bg-orange-50 font-semibold text-gray-900">Included</td><td class="py-3 pl-4">Often PNG only</td></tr>
+                        <tr class="border-b border-gray-100"><td class="py-3 pr-4">Sign-up required</td><td class="py-3 px-4 bg-orange-50 font-semibold text-gray-900">No</td><td class="py-3 pl-4">Usually yes</td></tr>
+                        <tr><td class="py-3 pr-4">Editable / dynamic redirect</td><td class="py-3 px-4 bg-orange-50 text-gray-500">Not included (static)</td><td class="py-3 pl-4">Yes (the paid feature)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-gray-400 mt-4">Ranges reflect common published plans and vary by provider — check each service for current pricing. Use a dynamic service only if you need to change a code's destination after printing.</p>
+        </section>
+
+        <!-- Use cases -->
+        <section id="use-cases" class="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">What you can make with it</h2>
+            <p class="text-gray-500 text-sm mb-6">One free tool, every common QR use case — each code is permanent and print-ready.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="border border-gray-100 rounded-lg p-5"><h3 class="font-semibold text-gray-800 mb-1">Restaurant &amp; café menus</h3><p class="text-sm text-gray-600">Link straight to a digital menu — no reprinting when prices change.</p></div>
+                <div class="border border-gray-100 rounded-lg p-5"><h3 class="font-semibold text-gray-800 mb-1">Guest WiFi access</h3><p class="text-sm text-gray-600">Let customers join your network with one scan, no typing passwords.</p></div>
+                <div class="border border-gray-100 rounded-lg p-5"><h3 class="font-semibold text-gray-800 mb-1">Digital business cards</h3><p class="text-sm text-gray-600">Share a vCard that saves your name, phone and email instantly.</p></div>
+                <div class="border border-gray-100 rounded-lg p-5"><h3 class="font-semibold text-gray-800 mb-1">Event check-in</h3><p class="text-sm text-gray-600">Point attendees to a registration or schedule page in one scan.</p></div>
+                <div class="border border-gray-100 rounded-lg p-5"><h3 class="font-semibold text-gray-800 mb-1">Product packaging</h3><p class="text-sm text-gray-600">Send buyers to instructions, reviews or a reorder page.</p></div>
+                <div class="border border-gray-100 rounded-lg p-5"><h3 class="font-semibold text-gray-800 mb-1">Flyers, signage &amp; print ads</h3><p class="text-sm text-gray-600">Bridge offline print to your website with a vector SVG that stays sharp.</p></div>
+            </div>
+        </section>
 
         <!-- Sales Letter CTA Band -->
         <section data-reveal class="mt-12 bg-gradient-to-br from-gray-900 to-[#1a1a1a] text-white rounded-2xl p-8 md:p-10 text-center shadow-xl border-2 border-orange-500/30">
