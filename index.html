@@ -66,6 +66,15 @@
     }
     </script>
     
+    <!-- Google tag (gtag.js) — AtlasBizNow GA4 property -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GT-KFTLV5WM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GT-KFTLV5WM', { linker: { domains: ['atlasbiznow.com'] } });
+    </script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1075,6 +1084,7 @@
                     // Store the lead so returning visitors skip the gate and we
                     // know who we've already captured.
                     try { localStorage.setItem(GATE_DONE_KEY, JSON.stringify({ name: name, email: email })); } catch (err) {}
+                    if (typeof gtag === 'function') { gtag('event', 'qr_lead_captured', { source: 'download_gate' }); }
                     document.getElementById('gate-success').classList.remove('hidden');
                     submitBtn.textContent = 'Done — downloading';
                     setTimeout(() => {
@@ -1105,6 +1115,11 @@
         function doDownload(format) {
             const canvas = document.querySelector('#qr-container canvas');
             if (!canvas) return;
+
+            // Usage event → GA4 (AtlasBizNow property)
+            if (typeof gtag === 'function') {
+                gtag('event', 'qr_downloaded', { qr_format: format });
+            }
             
             if (format === 'png') {
                 const link = document.createElement('a');
