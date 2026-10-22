@@ -24,6 +24,7 @@ HEAD = """<!DOCTYPE html>
 <meta name="description" content="{desc}">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="AtlasBizNow">
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="canonical" href="{url}">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="ABN Free QR Code Generator">
