@@ -6,8 +6,8 @@
     
     <!-- Primary SEO -->
     <title>ABN Free QR Code Generator | Custom QR Codes with Logo - Quick One-Time Sign Up</title>
-    <meta name="description" content="Generate custom QR codes for URLs, WiFi, text, and VCards. Free permanent QR code generator with custom colors and logo support. Quick one-time sign up. Create and download in PNG or SVG format.">
-    <meta name="keywords" content="Free QR Code Generator, Custom QR code with logo, Permanent QR code generator, One-time sign-up QR code maker, How to make a QR code">
+    <meta name="description" content="Generate custom QR codes for URLs, WiFi, text, and VCards. Free QR code generator with custom colors and logo support (static codes). Quick one-time sign up. Create and download in PNG or SVG format.">
+    <meta name="keywords" content="Free QR Code Generator, Custom QR code with logo, Static QR code generator, One-time sign-up QR code maker, How to make a QR code">
     <meta name="author" content="AtlasBizNow">
     <meta name="robots" content="index, follow">
     
@@ -21,7 +21,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="ABN Free QR Code Generator">
-    <meta name="twitter:description" content="Generate custom QR codes for URLs, WiFi, text, and VCards. Free permanent QR code generator.">
+    <meta name="twitter:description" content="Generate custom QR codes for URLs, WiFi, text, and VCards. Free static QR code generator.">
     
     <!-- Canonical -->
     <link rel="icon" type="image/png" href="favicon.png">
@@ -325,7 +325,7 @@
         </div>
         <div class="relative max-w-6xl mx-auto px-4 pb-6 pt-1 text-center">
             <h1 class="text-3xl md:text-4xl font-extrabold text-ink">Free <span class="qr-flair">QR Code</span> Generator</h1>
-            <p class="text-sm md:text-base text-gray-500 mt-2">Permanent custom QR codes · Quick one-time sign up · PNG &amp; SVG</p>
+            <p class="text-sm md:text-base text-gray-500 mt-2">Static QR codes — permanent while your link or WiFi stays the same · Quick one-time sign up · PNG &amp; SVG</p>
         </div>
     </header>
 
@@ -560,7 +560,7 @@
         <section id="why-abn" class="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Why use ABN's free QR code generator</h2>
             <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-600">
-                <li><span class="text-branddark font-bold">✓</span> <strong>Free &amp; permanent</strong> — no subscription, no expiry, no watermark.</li>
+                <li><span class="text-branddark font-bold">✓</span> <strong>Free &amp; static</strong> — no subscription, no watermark. Codes keep working while your link or WiFi stays the same.</li>
                 <li><span class="text-branddark font-bold">✓</span> <strong>Custom logo &amp; colors</strong> — brand every code with your own image.</li>
                 <li><span class="text-branddark font-bold">✓</span> <strong>PNG &amp; vector SVG</strong> — print-ready at any size, from business cards to billboards.</li>
                 <li><span class="text-branddark font-bold">✓</span> <strong>8 QR types</strong> — URL, WiFi, email, SMS, WhatsApp, phone, text and vCard.</li>
@@ -642,7 +642,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">Step 4: Download</h3>
-                    <p class="text-gray-600">Click the download button to save your QR code as PNG or SVG. The QR code is permanent and will never expire.</p>
+                    <p class="text-gray-600">Click the download button to save your QR code as PNG or SVG. Your code is static: it keeps working as long as the link, WiFi, or text it points to stays valid.</p>
                 </div>
             </div>
         </section>
@@ -686,7 +686,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <h4 class="text-white font-semibold mb-3"><a href="https://atlasbiznow.com" class="hover:text-brand transition">ABN Free QR Code Generator</a></h4>
-                    <p class="text-sm">Generate custom QR codes for free. Permanent QR codes that never expire.</p>
+                    <p class="text-sm">Generate custom QR codes for free. Static codes with no subscription and no watermark.</p>
                     <a href="https://atlasbiznow.com/atlasbiznow-sales-letter/" class="mt-3 inline-block text-sm text-[#f97316] hover:text-orange-400 font-semibold transition">See How We Grow Small Businesses →</a>
                 </div>
                 <div class="text-center">
@@ -746,7 +746,7 @@
                 <button type="submit" id="gate-submit" class="w-full bg-brand hover:bg-branddark text-white font-bold py-3 rounded-lg transition shadow-sm">Get My QR Code</button>
                 <p class="text-xs text-gray-400 text-center">We respect your privacy — never share your email. Unsubscribe anytime.</p>
             </form>
-            <p id="gate-success" class="hidden text-center text-sm text-green-600 font-medium mt-2">Check your inbox — your download is starting!</p>
+            <p id="gate-success" class="hidden text-center text-sm text-green-600 font-medium mt-2">Your download is starting…</p>
         </div>
     </div>
 
@@ -760,6 +760,7 @@
         let currentQRFrame = 'none';
         let pendingFormat = null;
         let qrGenerated = false;
+        let gateSubmitted = false;
 
         const EMAIL_ENDPOINT = 'https://atlasbiznow.com/wp-json/atlasbiznow/v1/subscribe';
         const GATE_DONE_KEY = 'abn_qr_lead';  // stores JSON {name, email} once captured
@@ -896,7 +897,7 @@
                 height: 200,
                 colorDark: fgColor,
                 colorLight: bgColor,
-                correctLevel: QRCode.CorrectLevel.M,
+                correctLevel: uploadedLogo ? QRCode.CorrectLevel.H : QRCode.CorrectLevel.M,
                 quietZone: 2,
                 logo: uploadedLogo || '',
                 logoWidth: 40,
@@ -1032,6 +1033,8 @@
 
         // Open email gate modal
         function openGate() {
+            gateSubmitted = false;
+            if (typeof gtag === 'function') { gtag('event', 'qr_gate_shown'); }
             const modal = document.getElementById('gate-modal');
             modal.classList.remove('hidden');
             void modal.offsetWidth;                 // flush display change so the entrance plays
@@ -1044,6 +1047,7 @@
         }
 
         function closeGate() {
+            if (!gateSubmitted && typeof gtag === 'function') { gtag('event', 'qr_gate_abandoned'); }
             const modal = document.getElementById('gate-modal');
             modal.classList.remove('gate-in');
             pendingFormat = null;
@@ -1085,7 +1089,8 @@
                     // Store the lead so returning visitors skip the gate and we
                     // know who we've already captured.
                     try { localStorage.setItem(GATE_DONE_KEY, JSON.stringify({ name: name, email: email })); } catch (err) {}
-                    if (typeof gtag === 'function') { gtag('event', 'qr_lead_captured', { source: 'download_gate' }); }
+                    gateSubmitted = true;
+                    if (typeof gtag === 'function') { gtag('event', 'qr_lead_captured', { source: 'download_gate' }); gtag('event', 'qr_gate_completed'); }
                     document.getElementById('gate-success').classList.remove('hidden');
                     submitBtn.textContent = 'Done — downloading';
                     setTimeout(() => {
@@ -1099,6 +1104,8 @@
                 .catch(err => {
                     // Network error — still allow download, but log
                     try { localStorage.setItem(GATE_DONE_KEY, JSON.stringify({ name: name, email: email })); } catch (e2) {}
+                    gateSubmitted = true;
+                    if (typeof gtag === 'function') { gtag('event', 'qr_gate_completed'); }
                     document.getElementById('gate-success').classList.remove('hidden');
                     submitBtn.textContent = 'Done — downloading';
                     setTimeout(() => {
